@@ -1,0 +1,62 @@
+
+obj/windows_gcc/BigInteger/BigInteger.o: src/BigInteger/BigInteger.cpp src/BigInteger/BigInteger.h \
+ ../MM_CommonUtils/src/Assert/MyAssert.h \
+ ../MM_CommonUtils/src/my_math_lib/ArithmeticOperations.h \
+ ../MM_CommonUtils/src/Logger/Logger.h \
+ ../MM_CommonUtils/src/Timer/Timer.h
+
+obj/windows_gcc/BigInteger/BigInteger_Template.o: src/BigInteger/BigInteger_Template.cpp \
+ src/BigInteger/BigInteger_Template.h \
+ ../MM_CommonUtils/src/Assert/MyAssert.h \
+ ../MM_CommonUtils/src/my_math_lib/ArithmeticOperations.h
+
+obj/windows_gcc/BigInteger/BigInteger_Template_UnitTest.o: src/BigInteger/BigInteger_Template_UnitTest.cpp \
+ src/BigInteger/BigInteger_Template.h \
+ ../MM_CommonUtils/src/Assert/MyAssert.h \
+ ../MM_CommonUtils/src/my_math_lib/ArithmeticOperations.h
+
+obj/windows_gcc/BigInteger/BigInteger_UnitTest.o: src/BigInteger/BigInteger_UnitTest.cpp \
+ src/BigInteger/BigInteger.h ../MM_CommonUtils/src/Assert/MyAssert.h \
+ ../MM_CommonUtils/src/my_math_lib/ArithmeticOperations.h \
+ ../MM_CommonUtils/src/Logger/Logger.h \
+ ../MM_CommonUtils/src/Timer/Timer.h
+
+obj/windows_gcc/MM_RSA_Algorithm_main.o: src/MM_RSA_Algorithm_main.cpp \
+ ../MM_CommonUtils/src/WindowsUtils/WindowsUtils.h \
+ ../MM_CommonUtils/src/Timer/Timer.h \
+ ../MM_UnitTestFramework/src/MM_UnitTestFramework/MM_UnitTestFramework.h
+
+obj/windows_gcc/RSA_end_to_end/RSA.o: src/RSA_end_to_end/RSA.cpp src/RSA_end_to_end/RSA.h \
+ ../MM_CommonUtils/src/Assert/MyAssert.h src/BigInteger/BigInteger.h \
+ ../MM_CommonUtils/src/my_math_lib/ArithmeticOperations.h \
+ ../MM_CommonUtils/src/Logger/Logger.h \
+ ../MM_CommonUtils/src/Timer/Timer.h \
+ ../MM_CommonUtils/src/my_math_lib/PrimeNumber.h \
+ ../MM_CommonUtils/src/my_math_lib/RandomNumber.h
+
+obj/windows_gcc/RSA_end_to_end/RSA_Template.o: src/RSA_end_to_end/RSA_Template.cpp \
+ src/RSA_end_to_end/RSA_Template.h \
+ ../MM_CommonUtils/src/Assert/MyAssert.h src/BigInteger/BigInteger.h \
+ ../MM_CommonUtils/src/my_math_lib/ArithmeticOperations.h \
+ ../MM_CommonUtils/src/Logger/Logger.h \
+ ../MM_CommonUtils/src/Timer/Timer.h \
+ ../MM_CommonUtils/src/my_math_lib/PrimeNumber.h \
+ ../MM_CommonUtils/src/my_math_lib/RandomNumber.h
+
+obj/windows_gcc/RSA_end_to_end/RSA_Template_UnitTest.o: src/RSA_end_to_end/RSA_Template_UnitTest.cpp \
+ src/RSA_end_to_end/RSA_Template.h \
+ ../MM_CommonUtils/src/Assert/MyAssert.h src/BigInteger/BigInteger.h \
+ ../MM_CommonUtils/src/my_math_lib/ArithmeticOperations.h \
+ ../MM_CommonUtils/src/Logger/Logger.h \
+ ../MM_CommonUtils/src/Timer/Timer.h \
+ ../MM_CommonUtils/src/my_math_lib/PrimeNumber.h \
+ ../MM_CommonUtils/src/my_math_lib/RandomNumber.h
+
+obj/windows_gcc/RSA_end_to_end/RSA_UnitTest.o: src/RSA_end_to_end/RSA_UnitTest.cpp \
+ src/RSA_end_to_end/RSA.h ../MM_CommonUtils/src/Assert/MyAssert.h \
+ src/BigInteger/BigInteger.h \
+ ../MM_CommonUtils/src/my_math_lib/ArithmeticOperations.h \
+ ../MM_CommonUtils/src/Logger/Logger.h \
+ ../MM_CommonUtils/src/Timer/Timer.h \
+ ../MM_CommonUtils/src/my_math_lib/PrimeNumber.h \
+ ../MM_CommonUtils/src/my_math_lib/RandomNumber.h
