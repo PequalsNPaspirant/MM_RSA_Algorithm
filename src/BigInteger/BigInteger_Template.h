@@ -6,8 +6,7 @@
 #include <cmath>
 using namespace std;
 
-#include "Assert/MyAssert.h"
-#include "my_math_lib/ArithmeticOperations.h"
+//#include "Maths/Maths_ArithmeticOperations.h"
 
 /*
 64 bit OS has 64 bit registers. But where the arithmetic oprtations using 64 bit data type 
@@ -309,7 +308,7 @@ namespace mm {
 		}
 
 		//Note: carry will never be non zero when we reach here. m_digits always has the number of elements to accomodate multiplication.
-		MyAssert::myRunTimeAssert(carry == 0);
+		assert(carry == 0);
 	}
 
 	template<typename DigitType, typename TypeToHoldResultsOfArithmeticOperations>
@@ -332,7 +331,7 @@ namespace mm {
 		}
 
 		//Note: carry will never be non zero when we reach here. m_digits always has the number of elements to accomodate addition.
-		MyAssert::myRunTimeAssert(carry == 0);
+		assert(carry == 0);
 	}
 
 	template<typename DigitType, typename TypeToHoldResultsOfArithmeticOperations>
@@ -365,7 +364,7 @@ namespace mm {
 		}
 
 		//Note: carry will never be non zero when we reach here. m_digits always has the number of elements to accomodate addition.
-		MyAssert::myRunTimeAssert(carry == 0);
+		assert(carry == 0);
 	}
 
 	template<typename DigitType, typename TypeToHoldResultsOfArithmeticOperations>
@@ -391,7 +390,7 @@ namespace mm {
 		}
 
 		//Note: carry will never be non zero when we reach here. m_digits always has the number of elements to accomodate addition.
-		MyAssert::myRunTimeAssert(carry == 0);
+		assert(carry == 0);
 	}
 
 	template<typename DigitType, typename TypeToHoldResultsOfArithmeticOperations>

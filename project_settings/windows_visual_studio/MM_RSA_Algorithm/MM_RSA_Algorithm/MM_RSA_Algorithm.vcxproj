@@ -19,17 +19,26 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\src\Maths\Maths_ArithmeticOperations.cpp" />
+    <ClCompile Include="..\..\..\..\src\Maths\Maths_PrimeNumber.cpp" />
+    <ClCompile Include="..\..\..\..\src\Maths\Maths_RandomNumber.cpp" />
+    <ClCompile Include="..\..\..\..\src\Timer\Timer_Timer.cpp" />
     <ClCompile Include="..\..\..\..\src\BigInteger\BigInteger.cpp" />
     <ClCompile Include="..\..\..\..\src\BigInteger\BigInteger_Template.cpp" />
     <ClCompile Include="..\..\..\..\src\BigInteger\BigInteger_Template_UnitTest.cpp" />
     <ClCompile Include="..\..\..\..\src\BigInteger\BigInteger_UnitTest.cpp" />
-    <ClCompile Include="..\..\..\..\src\MM_RSA_Algorithm_main.cpp" />
+    <ClCompile Include="..\..\..\..\src\_MM_RSA_Algorithm_main.cpp" />
     <ClCompile Include="..\..\..\..\src\RSA_end_to_end\RSA.cpp" />
     <ClCompile Include="..\..\..\..\src\RSA_end_to_end\RSA_Template.cpp" />
     <ClCompile Include="..\..\..\..\src\RSA_end_to_end\RSA_Template_UnitTest.cpp" />
     <ClCompile Include="..\..\..\..\src\RSA_end_to_end\RSA_UnitTest.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\src\MM_UnitTestFramework\MM_UnitTestFramework.h" />
+    <ClInclude Include="..\..\..\..\src\Maths\Maths_ArithmeticOperations.h" />
+    <ClInclude Include="..\..\..\..\src\Maths\Maths_PrimeNumber.h" />
+    <ClInclude Include="..\..\..\..\src\Maths\Maths_RandomNumber.h" />
+    <ClInclude Include="..\..\..\..\src\Timer\Timer_Timer.h" />
     <ClInclude Include="..\..\..\..\src\BigInteger\BigInteger.h" />
     <ClInclude Include="..\..\..\..\src\BigInteger\BigInteger_Template.h" />
     <ClInclude Include="..\..\..\..\src\RSA_end_to_end\RSA.h" />
@@ -109,7 +118,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\..\src;$(ProjectDir)\..\..\..\..\..\MM_UnitTestFramework\src;$(ProjectDir)\..\..\..\..\..\MM_CommonUtils\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ObjectFileName>$(ProjectDir)\..\..\..\..\obj\windows_visual_studio\$(Configuration)_$(Platform)\</ObjectFileName>
       <ProgramDataBaseFileName>$(ProjectDir)\..\..\..\..\obj\windows_visual_studio\$(Configuration)_$(Platform)\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
     </ClCompile>
@@ -118,8 +127,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OutputFile>$(ProjectDir)..\..\..\..\bin\windows_visual_studio\$(Configuration)_$(Platform)\$(TargetName)$(TargetExt)</OutputFile>
       <ProgramDatabaseFile>$(ProjectDir)..\..\..\..\bin\windows_visual_studio\$(Configuration)_$(Platform)\$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\..\..\..\..\MM_CommonUtils\bin\windows_visual_studio\$(Configuration)_$(Platform)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>MM_CommonUtils.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -129,7 +139,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\..\src;$(ProjectDir)\..\..\..\..\..\MM_UnitTestFramework\src;$(ProjectDir)\..\..\..\..\..\MM_CommonUtils\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ObjectFileName>$(ProjectDir)\..\..\..\..\obj\windows_visual_studio\$(Configuration)_$(Platform)\</ObjectFileName>
       <ProgramDataBaseFileName>$(ProjectDir)\..\..\..\..\obj\windows_visual_studio\$(Configuration)_$(Platform)\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
     </ClCompile>
@@ -138,8 +148,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OutputFile>$(ProjectDir)..\..\..\..\bin\windows_visual_studio\$(Configuration)_$(Platform)\$(TargetName)$(TargetExt)</OutputFile>
       <ProgramDatabaseFile>$(ProjectDir)..\..\..\..\bin\windows_visual_studio\$(Configuration)_$(Platform)\$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\..\..\..\..\MM_CommonUtils\bin\windows_visual_studio\$(Configuration)_$(Platform)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>MM_CommonUtils.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -151,7 +162,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\..\src;$(ProjectDir)\..\..\..\..\..\MM_UnitTestFramework\src;$(ProjectDir)\..\..\..\..\..\MM_CommonUtils\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ObjectFileName>$(ProjectDir)\..\..\..\..\obj\windows_visual_studio\$(Configuration)_$(Platform)\</ObjectFileName>
       <ProgramDataBaseFileName>$(ProjectDir)\..\..\..\..\obj\windows_visual_studio\$(Configuration)_$(Platform)\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
     </ClCompile>
@@ -162,8 +173,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OutputFile>$(ProjectDir)..\..\..\..\bin\windows_visual_studio\$(Configuration)_$(Platform)\$(TargetName)$(TargetExt)</OutputFile>
       <ProgramDatabaseFile>$(ProjectDir)..\..\..\..\bin\windows_visual_studio\$(Configuration)_$(Platform)\$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\..\..\..\..\MM_CommonUtils\bin\windows_visual_studio\$(Configuration)_$(Platform)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>MM_CommonUtils.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -175,7 +187,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\..\src;$(ProjectDir)\..\..\..\..\..\MM_UnitTestFramework\src;$(ProjectDir)\..\..\..\..\..\MM_CommonUtils\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ObjectFileName>$(ProjectDir)\..\..\..\..\obj\windows_visual_studio\$(Configuration)_$(Platform)\</ObjectFileName>
       <ProgramDataBaseFileName>$(ProjectDir)\..\..\..\..\obj\windows_visual_studio\$(Configuration)_$(Platform)\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
     </ClCompile>
@@ -186,8 +198,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OutputFile>$(ProjectDir)..\..\..\..\bin\windows_visual_studio\$(Configuration)_$(Platform)\$(TargetName)$(TargetExt)</OutputFile>
       <ProgramDatabaseFile>$(ProjectDir)..\..\..\..\bin\windows_visual_studio\$(Configuration)_$(Platform)\$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\..\..\..\..\MM_CommonUtils\bin\windows_visual_studio\$(Configuration)_$(Platform)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>MM_CommonUtils.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

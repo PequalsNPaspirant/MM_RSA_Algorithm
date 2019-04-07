@@ -2,8 +2,7 @@
 
 #include <iostream>
 
-#include "WindowsUtils/WindowsUtils.h"
-#include "Timer/Timer.h"
+#include "Timer/Timer_Timer.h"
 #include "MM_UnitTestFramework/MM_UnitTestFramework.h"
 
 namespace mm {
@@ -11,14 +10,14 @@ namespace mm {
 	//Global function declarations
 	void RSA_Template_UnitTest();
 	void RSA_UnitTest();
+
+	MM_DEFINE_FLAG(false, arithmeticOperations_power);
 }
 
 using namespace mm;
 
 int main(int argc, char* argv[])
 {
-	MaximizeWindow();
-
 	MM_RUN_UNIT_TESTS
 
 	//RSA_Template_UnitTest();

@@ -8,6 +8,7 @@ http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/6-b14/jav
 #include <iostream>
 #include <ctime>
 #include <string>
+#include <cassert>
 using namespace std;
 
 #include "BigInteger_Template.h"
@@ -43,9 +44,9 @@ namespace mm {
 			//cout << "\nValue: " << i << " BigIntegerTemplate with base 10: " << base10String2;
 
 			string string1 = to_string(testValues[i]);
-			MyAssert::myRunTimeAssert(string1 == base10String1);
-			MyAssert::myRunTimeAssert(base2String1 == base2String2);
-			MyAssert::myRunTimeAssert(base10String1 == base10String2);
+			assert(string1 == base10String1);
+			assert(base2String1 == base2String2);
+			assert(base10String1 == base10String2);
 		}
 	}
 
@@ -84,13 +85,13 @@ namespace mm {
 					BigIntegerTemplate<unsigned int, unsigned int> bigInt3(string1, base[i], base[k]);
 					string string3 = bigInt3.toString();
 
-					MyAssert::myRunTimeAssert(string2 == string3);
+					assert(string2 == string3);
 
 					//Convert this string back to BigIntegerTemplate of base[i]
 					BigIntegerTemplate<unsigned int, unsigned int> bigInt4(string2, base[k], base[i]);
 					string string4 = bigInt4.toString();
 
-					MyAssert::myRunTimeAssert(string1 == string4);
+					assert(string1 == string4);
 				}
 			}
 		}
@@ -108,13 +109,13 @@ namespace mm {
 		BigIntegerTemplate<unsigned int, unsigned int> bigInt3(string1, base1, base2);
 		string string3 = bigInt3.toString();
 
-		MyAssert::myRunTimeAssert(string2 == string3);
+		assert(string2 == string3);
 
 		//Convert this string back to BigIntegerTemplate of base[i]
 		BigIntegerTemplate<unsigned int, unsigned int> bigInt4(string2, base2, base1);
 		string string4 = bigInt4.toString();
 
-		MyAssert::myRunTimeAssert(string1 == string4);
+		assert(string1 == string4);
 	}
 
 	void testConstructionBigIntegerTemplateVeryVeryExaustive()
@@ -156,17 +157,17 @@ namespace mm {
 		BigIntegerTemplate<unsigned int, unsigned int> bigInt3 = bigInt1 + bigInt2;
 		long long result1 = bigInt3.covertToDecimal();
 		long long result2 = number1 + number2;
-		MyAssert::myRunTimeAssert(result1 == result2);
+		assert(result1 == result2);
 		//Test substraction
 		BigIntegerTemplate<unsigned int, unsigned int> bigInt4 = bigInt1 - bigInt2;
 		long long result3 = bigInt4.covertToDecimal();
 		long long result4 = number1 - number2;
-		MyAssert::myRunTimeAssert(result3 == result4);
+		assert(result3 == result4);
 		//Test multiplication
 		BigIntegerTemplate<unsigned int, unsigned int> bigInt5 = bigInt1 * bigInt2;
 		long long result5 = bigInt5.covertToDecimal();
 		long long result6 = number1 * number2;
-		MyAssert::myRunTimeAssert(result5 == result6);
+		assert(result5 == result6);
 	}
 
 

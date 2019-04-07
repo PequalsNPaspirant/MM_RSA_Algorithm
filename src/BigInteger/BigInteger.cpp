@@ -8,10 +8,12 @@ http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/6-b14/jav
 #include <iostream>
 #include <iomanip>
 #include <cmath>
+#include <string>
 using namespace std;
 
 #include "BigInteger/BigInteger.h"
-#include "Timer/Timer.h"
+#include "Timer/Timer_Timer.h"
+#include "Maths/Maths_ArithmeticOperations.h"
 
 namespace mm {
 
@@ -243,10 +245,11 @@ BigInteger::BigInteger(const BigInteger& copyFrom, bool absolute /*= false*/)
 {
 }
 
-Logger& BigInteger::getLogger()
+ostream& BigInteger::getLogger()
 {
-	static Logger bigIntegerLogger("..\\..\\..\\test\\logs\\windows_visual_studio\\BigIntegerLogs");
-	return bigIntegerLogger;
+	//static Logger bigIntegerLogger("..\\..\\..\\test\\logs\\windows_visual_studio\\BigIntegerLogs");
+	//return bigIntegerLogger;
+	return cout;
 }
 
 void BigInteger::initialize(vector<DigitType>& digits, unsigned long long number)
@@ -329,7 +332,7 @@ void BigInteger::doMultiply(vector<DigitType>& lhsCumResultVector, const vector<
 		}
 
 		//Note: carry will never be non zero when we reach here. lhsCumResultVector always has the number of elements to accomodate multiplication.
-		MyAssert::myRunTimeAssert(carry == 0);
+		assert(carry == 0);
 	}
 }
 
@@ -357,7 +360,7 @@ void BigInteger::doMultiply(vector<DigitType>& lhsCumResultVector, const vector<
 		}
 
 		//Note: carry will never be non zero when we reach here. lhsCumResultVector always has the number of elements to accomodate multiplication.
-		MyAssert::myRunTimeAssert(carry == 0);
+		assert(carry == 0);
 	}	
 }
 
@@ -389,12 +392,12 @@ void BigInteger::doMultiply(vector<DigitType>& lhsCumResultVector, const ResultT
 
 	//if (carry != 0)
 	//{
-	//	MyAssert::myRunTimeAssert(end > 0);
+	//	assert(end > 0);
 	//	lhsCumResultVector[end - 1] = carry;
 	//}
 
 	//Note: carry will never be non zero when we reach here. m_digits always has the number of elements to accomodate multiplication.
-	//MyAssert::myRunTimeAssert(carry == 0);
+	//assert(carry == 0);
 }
 
 
@@ -454,12 +457,12 @@ void BigInteger::doMultiplyBySingleDigit(DigitType singleDigit)
 
 	if (carry != 0)
 	{
-		MyAssert::myRunTimeAssert(end > 0);
+		assert(end > 0);
 		m_digits[end - 1] = carry;
 	}
 
 	//Note: carry will never be non zero when we reach here. m_digits always has the number of elements to accomodate multiplication.
-	//MyAssert::myRunTimeAssert(carry == 0);
+	//assert(carry == 0);
 }
 
 void BigInteger::doAdd(vector<DigitType>& lhsCumResultVector, const vector<DigitType>& rhsVector)
@@ -485,7 +488,7 @@ void BigInteger::doAdd(vector<DigitType>& lhsCumResultVector, const vector<Digit
 	}
 
 	//Note: carry will never be non zero when we reach here. m_digits always has the number of elements to accomodate addition.
-	MyAssert::myRunTimeAssert(carry == 0);
+	assert(carry == 0);
 }
 
 void BigInteger::doAdd(vector<DigitType>& lhsCumResultVector, const vector<DigitType>& rhsVector, const ResultType& baseIn)
@@ -511,7 +514,7 @@ void BigInteger::doAdd(vector<DigitType>& lhsCumResultVector, const vector<Digit
 	}
 
 	//Note: carry will never be non zero when we reach here. m_digits always has the number of elements to accomodate addition.
-	MyAssert::myRunTimeAssert(carry == 0);
+	assert(carry == 0);
 }
 
 void BigInteger::doAdd(vector<DigitType>& lhsCumResultVector, const ResultType& rhs, const ResultType& baseIn)
@@ -565,7 +568,7 @@ void BigInteger::doSubstract(vector<DigitType>& lhsCumResultVector, const vector
 	}
 
 	//Note: carry will never be non zero when we reach here. m_digits always has the number of elements to accomodate addition/substraction.
-	MyAssert::myRunTimeAssert(carry == 0);
+	assert(carry == 0);
 }
 
 void BigInteger::doAddSingleDigit(DigitType singleDigit)
@@ -586,7 +589,7 @@ void BigInteger::doAddSingleDigit(DigitType singleDigit)
 	}
 
 	//Note: carry will never be non zero when we reach here. m_digits always has the number of elements to accomodate addition.
-	//MyAssert::myRunTimeAssert(carry == 0);
+	//assert(carry == 0);
 }
 
 void BigInteger::convertDecimalToBase(vector<DigitType>& digitVector, size_t targetBase, ResultType decimalNumber)
@@ -620,7 +623,7 @@ BigInteger::DigitType BigInteger::convertCharToDecimalNumber(const char& digitIn
 	//	currentUnitPlace = digitIn - 'a' + 10;
 	//else
 	//	//throw exception (Assert for now)
-	//	MyAssert::myRunTimeAssert(false, "Invalid Digit");
+	//	assert(false, "Invalid Digit");
 
 	DigitType currentUnitPlace = 0;
 	if (digitIn > 47 && digitIn < 58)
@@ -630,7 +633,7 @@ BigInteger::DigitType BigInteger::convertCharToDecimalNumber(const char& digitIn
 	else if(digitIn > 96 && digitIn < 123)
 		currentUnitPlace = digitIn - 'a' + 10;
 	else
-		MyAssert::myRunTimeAssert(false, "Invalid Digit");
+		assert(false, "Invalid Digit");
 
 	return currentUnitPlace;
 }
@@ -1240,14 +1243,14 @@ void BigInteger::divideAndRemainder(const BigInteger& divisor, BigInteger& quoti
 
 		//ResultType stepDivisor = divisor.m_digits[i] * resultTypeBase * numberSystemBase + divisor.m_digits[i + 1] * resultTypeBase + divisor.m_digits[i + 2] + roundingCorrection;
 
-		MyAssert::myRunTimeAssert(stepDivisor != 0);
+		assert(stepDivisor != 0);
 
 		//Based on experimental results, third version avoids the second iteration below in trial division
 		//DigitType stepQuotient = round(stepDividend / stepDivisor); //TODO: what if stepDivisor = 0?
 		//DigitType stepQuotient = round(stepDividend / stepDivisor) - 1;
 		DigitType stepQuotient = stepDividend / stepDivisor;
 
-		//MyAssert::myRunTimeAssert(stepQuotient < numberSystemBase);
+		//assert(stepQuotient < numberSystemBase);
 		if (stepQuotient >= numberSystemBase)
 			stepQuotient = numberSystemBase - 1;
 
@@ -1313,7 +1316,7 @@ void BigInteger::divideAndRemainder(const BigInteger& divisor, BigInteger& quoti
 		}*/
 		if (iterations > 2)
 			BigInteger::getLogger() << ("WARNING: iterations = " + to_string(iterations));
-		//MyAssert::myRunTimeAssert(iterations <= 2);
+		//assert(iterations <= 2);
 		quotient.m_digits.push_back(stepQuotient);
 		remainder.removeLeadingZeros();
 		currentDividend = remainder;
@@ -1403,9 +1406,9 @@ void BigInteger::divideAndRemainder_1(const BigInteger& divisor, BigInteger& quo
 
 			//ResultType stepDivisor = divisor.m_digits[i] * resultTypeBase * numberSystemBase + divisor.m_digits[i + 1] * resultTypeBase + divisor.m_digits[i + 2] + roundingCorrection;
 
-			MyAssert::myRunTimeAssert(stepDivisor != 0);
+			assert(stepDivisor != 0);
 			ResultType stepQuotient = stepDividend / stepDivisor; //TODO: what if stepDivisor = 0?
-			MyAssert::myRunTimeAssert(stepQuotient < numberSystemBase);
+			assert(stepQuotient < numberSystemBase);
 
 			int iterations = 0;
 			DigitType leftLimit = 0;
@@ -1449,7 +1452,7 @@ void BigInteger::divideAndRemainder_1(const BigInteger& divisor, BigInteger& quo
 			}
 			BigInteger::getLogger() << "\nFinal stepQuotient: " << stepQuotient;
 			BigInteger::getLogger() << "\nNo. of iterations: " << iterations;
-			//MyAssert::myRunTimeAssert(iterations < 2);
+			//assert(iterations < 2);
 			quotient.m_digits.push_back(stepQuotient);
 			remainder.removeLeadingZeros();
 			currentDividend = remainder;
@@ -1695,7 +1698,7 @@ BigInteger BigInteger::power2(const BigInteger& exponent) const
 
 BigInteger BigInteger::modularExponentiation(const BigInteger& exponent, const BigInteger& modulus)
 {
-	MyAssert::myRunTimeAssert(modulus > BigInteger::bigIntZero);
+	assert(modulus > BigInteger::bigIntZero);
 
 	if (modulus == BigInteger::bigIntOne) 
 		return BigInteger::bigIntZero;

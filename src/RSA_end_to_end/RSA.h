@@ -10,13 +10,13 @@
 #include <ctime>
 #include <string>
 #include <vector>
+#include <cassert>
 using namespace std;
 
-#include "Assert/MyAssert.h"
 #include "BigInteger/BigInteger.h"
-#include "Timer/Timer.h"
-#include "my_math_lib/PrimeNumber.h"
-#include "my_math_lib/ArithmeticOperations.h"
+#include "Timer/Timer_Timer.h"
+#include "Maths/Maths_PrimeNumber.h"
+#include "Maths/Maths_ArithmeticOperations.h"
 
 namespace mm {
 

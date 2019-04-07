@@ -12,13 +12,13 @@
 #include <ctime>
 #include <string>
 #include <vector>
+#include <cassert>
 using namespace std;
 
-#include "Assert/MyAssert.h"
 #include "BigInteger/BigInteger.h"
-#include "Timer/Timer.h"
-#include "my_math_lib/PrimeNumber.h"
-#include "my_math_lib/ArithmeticOperations.h"
+#include "Timer/Timer_Timer.h"
+#include "Maths/Maths_PrimeNumber.h"
+#include "Maths/Maths_ArithmeticOperations.h"
 
 namespace mm {
 
@@ -132,7 +132,7 @@ namespace mm {
 		m_init(false)
 	{
 		size_t size = sizeof(Type);
-		MyAssert::myRunTimeAssert(size * 8 > (2 * securityBitLength));
+		assert(size * 8 > (2 * securityBitLength));
 	}
 
 	template <typename Type>
@@ -217,7 +217,7 @@ namespace mm {
 				break;
 
 			default:
-				MyAssert::myRunTimeAssert(false, "Unknown TotientFunctionType");
+				assert(false, "Unknown TotientFunctionType");
 			}
 		}
 
@@ -364,7 +364,7 @@ namespace mm {
 			break;
 
 		default:
-			MyAssert::myRunTimeAssert(false, "Unknown PrivateExponentCalculationMethod");
+			assert(false, "Unknown PrivateExponentCalculationMethod");
 		}
 
 		m_privateExponentCalculationDuration = t.getDurationStringTillNowInNanoSeconds();

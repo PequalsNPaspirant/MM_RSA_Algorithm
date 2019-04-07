@@ -265,7 +265,7 @@ namespace mm {
 				RSA_Template<unsigned long long> objRSAULongLong(p, q, e, d, TF);
 				if (objRSAULongLong.generatePrivateExponent(2 * N)) // d = 
 				{
-					MyAssert::myRunTimeAssert(false, "We should never reach here!");
+					assert(false, "We should never reach here!");
 				}
 				else
 					cout << "\nERROR: Unable to calculate private exponent for given situation";
@@ -346,7 +346,7 @@ namespace mm {
 			RSA_Template<unsigned long long> objRSAULongLong(p, q, e, d, TF);
 			if (objRSAULongLong.generatePrivateExponent(2 * N)) // d = 
 			{
-				MyAssert::myRunTimeAssert(false, "We should never reach here!");
+				assert(false, "We should never reach here!");
 			}
 			else
 				cout << "\nERROR: Unable to calculate private exponent for given situation";

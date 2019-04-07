@@ -631,7 +631,7 @@ namespace mm {
 				}
 			break;
 		default:
-			MyAssert::myRunTimeAssert(false, "Unknown PrivateExponentCalculationMethod");
+			assert(false, "Unknown PrivateExponentCalculationMethod");
 		}
 		m_privateExponentCalculationDuration = t.getDurationStringTillNowInNanoSeconds();
 		return retVal;
