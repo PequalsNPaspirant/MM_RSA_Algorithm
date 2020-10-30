@@ -178,12 +178,12 @@ namespace mm {
 			//	<< " F = " << F;
 #endif
 
-			if ((p != 0 && q != 0) || (generatePrimeNumbers() && (N = p * q)))
+			if ((p != Type{ 0 } && q != Type{ 0 }) || generatePrimeNumbers())
 			{
 				if (
-					(TF != 0 || generateTotientFunction())
-					&& (e != 0 || generatePublicExponent())
-					&& (d != 0 || generatePrivateExponent(2 * N))
+					(TF != Type{ 0 } || generateTotientFunction())
+					&& (e != Type{ 0 } || generatePublicExponent())
+					&& (d != Type{ 0 } || generatePrivateExponent(Type{ 2 } * N))
 					)
 				{
 					m_init = true;
@@ -200,7 +200,7 @@ namespace mm {
 	template <typename Type>
 	bool RSA_Template<Type>::generateTotientFunction()
 	{
-		if (ArithmeticOperations<Type>::calculteGCD(p, q) != 1)
+		if (ArithmeticOperations<Type>::calculteGCD(p, q) != Type{ 1 })
 			return false;
 		else //If p and q are relatively prime or co-prime
 		{
@@ -208,12 +208,12 @@ namespace mm {
 			{
 			case RSAMethodInitializer::eTotientFunctionType::CarmichaelsTotientFunction:
 				// Calculate Carmichael's totient function λ(N) = lcm(p − 1, q − 1)
-				TF = ArithmeticOperations<Type>::calculteLCM(p - 1, q - 1);
+				TF = ArithmeticOperations<Type>::calculteLCM(p - Type{ 1 }, q - Type{ 1 });
 				break;
 
 			case RSAMethodInitializer::eTotientFunctionType::EulersTotientFunction:
 				// Calculate Euler totient function Ø(N) = (p - 1)(q - 1)
-				TF = (p - 1) * (q - 1);
+				TF = (p - Type{ 1 }) * (q - Type{ 1 });
 				break;
 
 			default:
@@ -230,7 +230,7 @@ namespace mm {
 		bool retVal = false;
 		Timer t;
 		for (e = startSearchFrom; e < TF; e++) //...what should be limit for e....ideally there is no limit for e....and e can be 1
-			if (ArithmeticOperations<Type>::calculteGCD(e, TF) == 1)
+			if (ArithmeticOperations<Type>::calculteGCD(e, TF) == Type{ 1 })
 			{
 				retVal = true;
 				break;
@@ -259,7 +259,7 @@ namespace mm {
 			// Remember odd/even iterations 
 			iter = 1;
 			// Step X2. Loop while v3 != 0
-			while (v3 != 0)
+			while (v3 != Type{ 0 })
 			{
 				// Step X3. Divide and "Subtract"
 				q = u3 / v3;
@@ -270,7 +270,7 @@ namespace mm {
 				iter = -iter;
 			}
 			// Make sure u3 = gcd(u,v) == 1 
-			if (u3 == 1) // Error: No inverse exists if u3 != 1
+			if (u3 == Type{ 1 }) // Error: No inverse exists if u3 != 1
 			{
 				// Ensure a positive result
 				if (iter < 0)
@@ -298,7 +298,7 @@ namespace mm {
 			Type b = e;
 
 			int dsign = 1, newdsign = 1;
-			while (b != 0)
+			while (b != Type{ 0 })
 			{
 				Type quotient = a / b;
 
@@ -327,7 +327,7 @@ namespace mm {
 				dsign = tempnewdsign;
 			}
 
-			if (a == 1)
+			if (a == Type{ 1 })
 			{
 				if (dsign == -1)
 					d = TF - d;
@@ -346,9 +346,9 @@ namespace mm {
 			*/
 
 			for (Type k = 1; k < endSearchAt; k++) //....what should be limit for k...ideally there is no limit for d..so no limit for k
-				if ((k * TF + 1) % e == 0)
+				if ((k * TF + Type{ 1 }) % e == Type{ 0 })
 				{
-					d = (k * TF + 1) / e;
+					d = (k * TF + Type{ 1 }) / e;
 					retVal = true;
 					break;
 				}
@@ -356,7 +356,7 @@ namespace mm {
 
 		case RSAMethodInitializer::IterateOverPrivateExponent_d:
 			for (d = e; d < endSearchAt; d++)
-				if ((d * e) % TF == 1)
+				if ((d * e) % TF == Type{ 1 })
 				{
 					retVal = true;
 					break;
@@ -438,9 +438,9 @@ namespace mm {
 		Timer t;
 		for (int i = 0; i < m_originalValues.size(); i++)
 		{
-			m_originalMessage += char(m_originalValues[i]);
-			m_encryptedValues.push_back(ModularOperations::doModularExponentiation(m_originalValues[i], e, N));
-			m_encryptedMessage += char(m_encryptedValues[i]);
+			m_originalMessage += static_cast<char>(static_cast<long long>(m_originalValues[i]));
+			m_encryptedValues.push_back(ModularOperations::doModularExponentiation<Type>(m_originalValues[i], e, N));
+			m_encryptedMessage += static_cast<char>(static_cast<long long>(m_encryptedValues[i])); //The encryoted value may or may not fit into unsigned char
 		}
 
 		m_encryptionDuration = t.getDurationStringTillNowInNanoSeconds();
@@ -454,7 +454,7 @@ namespace mm {
 		{
 			Type decryptVal = ModularOperations::doModularExponentiation(m_encryptedValues[i], d, N);
 			m_decryptedValues.push_back(decryptVal);
-			m_decryptedMessage += char(decryptVal);
+			m_decryptedMessage += char(static_cast<long long>(decryptVal));
 		}
 		m_decryptionDuration = t.getDurationStringTillNowInNanoSeconds();
 	}
@@ -463,7 +463,8 @@ namespace mm {
 
 	//Utility Functions
 	template <typename Type>
-	bool RSA_Template<Type>::generatePrimeNumbers()
+	bool generatePrimeNumbersHelper(Type& p, Type& q, Type& N,
+		size_t m_securityBitLength, string& m_primeNumber1GenerationDuration, string& m_primeNumber2GenerationDuration)
 	{
 		Timer t;
 		p = PrimeNumber<Type>::generateRandomPrimeNumber(m_securityBitLength - 2);
@@ -472,7 +473,32 @@ namespace mm {
 		q = PrimeNumber<Type>::generateRandomPrimeNumber(m_securityBitLength);
 		m_primeNumber2GenerationDuration = t.getDurationStringTillNowInNanoSeconds();
 
+		N = p * q;
+
 		return true;
+	}
+
+	template <>
+	inline bool generatePrimeNumbersHelper<BigInteger>(BigInteger& p, BigInteger& q, BigInteger& N, 
+		size_t m_securityBitLength, string& m_primeNumber1GenerationDuration, string& m_primeNumber2GenerationDuration)
+	{
+		Timer t;
+		p = BigInteger::getPrimeNumber(m_securityBitLength * 0.9, Fermat_efficient);
+		m_primeNumber1GenerationDuration = t.getDurationStringTillNowInNanoSeconds();
+		t.resetTimer();
+		q = BigInteger::getPrimeNumber(m_securityBitLength, Fermat_efficient);
+		m_primeNumber2GenerationDuration = t.getDurationStringTillNowInNanoSeconds();
+
+		N = p * q;
+
+		return true;
+	}
+
+	//Utility Functions
+	template <typename Type>
+	bool RSA_Template<Type>::generatePrimeNumbers()
+	{
+		return generatePrimeNumbersHelper<Type>(p, q, N, m_securityBitLength, m_primeNumber1GenerationDuration, m_primeNumber2GenerationDuration);
 	}
 
 	template <typename Type>
@@ -517,6 +543,8 @@ namespace mm {
 
 			cout << "\n-------------------- Test Result: ERROR! Original and Decrypted messages are different! --------------------";
 		}
+
+		cout << "\n\n";
 	}
 
 
@@ -525,7 +553,8 @@ namespace mm {
 	public:
 		//Unit Testing
 		static void TestAllDataTypes();
-		static void TestAllAlgorithmsOfRSA();
+		template<typename Type>
+		static void TestAllAlgorithmsOfRSA(int primeNumberSizeInBits, bool avoidUsingIterateOverPrivateExponent_d);
 		static void RSATest_usePrecalculatedPrimes();
 		static void RSATest_boundaryConditions();
 		static void RSATestWithBigInteger();

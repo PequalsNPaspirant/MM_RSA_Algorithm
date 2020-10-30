@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 #include <cmath>
+#include <random>
 using namespace std;
 
 namespace mm {
@@ -35,8 +36,21 @@ namespace mm {
 		//unsigned short numberOfDigits = m_securityBitLength * log10(2.0);
 		//return (rand() % Type(pow(10, numberOfDigits)));
 
-		Type num = rand() % Type(pow(2, bitCount));
-		return num + (1 << (bitCount - 1));  //Ensure that leftmost bit is always on so that the number has digits equal to "bitCount" (in base 2)
+		//Type num = Type{ rand() %  static_cast<unsigned long long>(pow(2, bitCount)) };
+		//return num + static_cast<Type>( 1ULL << (bitCount - 1) );  //Ensure that leftmost bit is always on so that the number has digits equal to "bitCount" (in base 2)
+		
+		std::random_device rd;     //Get a random seed from the OS entropy device, or whatever
+		std::mt19937_64 eng(rd()); //Use the 64-bit Mersenne Twister 19937 generator
+								   //and seed it with entropy.
+
+								   //Define the distribution, by default it goes from 0 to MAX(unsigned long long)
+								   //or what have you.
+		std::uniform_int_distribution<unsigned long long> distr;
+
+		Type retVal = distr(eng);
+		for(int i = sizeof(size_t) * 8; i <= bitCount; i += sizeof(size_t) * 8)
+			retVal += distr(eng);
+		return retVal;
 	}
 
 	template <typename Type>

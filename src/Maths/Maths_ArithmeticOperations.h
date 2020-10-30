@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cassert>
+#include "BigInteger/BigInteger.h"
 
 namespace mm {
 
@@ -24,13 +25,15 @@ namespace mm {
 	public:
 		template <typename Type>
 		static Type doModularExponentiation(Type base, Type exponent, Type modulus);
+		template <>
+		static BigInteger ModularOperations::doModularExponentiation<BigInteger>(BigInteger base, BigInteger exponent, BigInteger modulus);
 	};
 
 
 	template <typename Type>
 	Type ArithmeticOperations<Type>::calculteGCD(Type a, Type b)
 	{
-		while (a != 0 && b != 0)
+		while (a != Type{ 0 } && b != Type{ 0 })
 		{
 			if (a > b)
 				//a = a % b;
@@ -75,6 +78,12 @@ namespace mm {
 		return result;
 	}
 
+	template <>
+	inline BigInteger ModularOperations::doModularExponentiation<BigInteger>(BigInteger base, BigInteger exponent, BigInteger modulus)
+	{
+		return base.modularExponentiation(exponent, modulus);
+	}
+
 
 	template <typename Type>
 	ArithmeticOperations<Type>::ArithmeticOperations()
@@ -89,13 +98,13 @@ namespace mm {
 	template <typename Type>
 	Type ModularOperations::doModularExponentiation(Type base, Type exponent, Type modulus)
 	{
-		assert(modulus > 0);
-		if (modulus == 1) return 0;
+		assert(modulus > Type{ 0 });
+		if (modulus == Type{ 1 }) return Type{ 0 };
 		Type result = 1;
 		base = base % modulus;
-		while (exponent > 0)
+		while (exponent > Type{ 0 })
 		{
-			if (exponent % 2 == 1)
+			if (exponent % Type{ 2 } == Type{ 1 })
 				result = (result * base) % modulus;
 			base = (base * base) % modulus;
 			exponent = exponent >> 1;
@@ -103,6 +112,8 @@ namespace mm {
 
 		return result;
 	}
+
+	
 
 	double power_recursive(double base, int exponent);
 	double power_iterative(double base, int exponent);

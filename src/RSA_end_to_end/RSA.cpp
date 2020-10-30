@@ -4,8 +4,6 @@
 
 #include "RSA.h"
 
-namespace mm {
-
 	/*
 	TODO:
 	DONE : Code refactoring of existing RSAComplete class
@@ -456,6 +454,7 @@ namespace mm {
 
 	*/
 
+namespace mm {
 
 	//Constructors
 	RSA::RSA(unsigned short securityBitLength /*= 1024*/)
@@ -464,7 +463,7 @@ namespace mm {
 		generatePrimeNumbers();
 		generateTotientFunction();
 		generatePublicExponent();
-		generatePrivateExponent(2LL * N);
+		generatePrivateExponent(BigInteger::bigIntTwo *N);
 	}
 
 	RSA::RSA(BigInteger p_, BigInteger q_)
@@ -473,7 +472,7 @@ namespace mm {
 	{
 		generateTotientFunction();
 		generatePublicExponent();
-		generatePrivateExponent(2LL * N);
+		generatePrivateExponent(BigInteger::bigIntTwo * N);
 	}
 
 	RSA::RSA(BigInteger p_, BigInteger q_, BigInteger e_)
@@ -481,7 +480,7 @@ namespace mm {
 		N(p * q)
 	{
 		generateTotientFunction();
-		generatePrivateExponent(2LL * N);
+		generatePrivateExponent(BigInteger::bigIntTwo * N);
 	}
 
 	RSA::RSA(BigInteger p_, BigInteger q_, BigInteger e_, BigInteger d_, BigInteger TF_)
@@ -509,7 +508,7 @@ namespace mm {
 		bool retVal = false;
 		Timer t;
 		for (e = startSearchFrom; e < TF; e++) //...what should be limit for e....ideally there is no limit for e....and e can be 1
-			if (ArithmeticOperations<BigInteger>::calculteGCD(e, TF) == 1LL)
+			if (ArithmeticOperations<BigInteger>::calculteGCD(e, TF) == BigInteger::bigIntOne)
 			{
 				retVal = true;
 				break;

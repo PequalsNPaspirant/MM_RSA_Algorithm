@@ -157,6 +157,12 @@ BigInteger::BigInteger(const unsigned long long& number)
 	initialize(m_digits, number);
 }
 
+BigInteger::BigInteger(const double& number)
+	: BigInteger(static_cast<long double>(number))
+{
+
+}
+
 BigInteger::BigInteger(const long double& number)
 	: m_isPositive(true), m_digits(0) //Avoid initial memory allocation
 {
@@ -166,14 +172,17 @@ BigInteger::BigInteger(const long double& number)
 		m_isPositive = false;
 		currentNumber = -currentNumber;
 	}
-	size_t numRequiredDigits = ceil(log(currentNumber + 1.0) / log(numberSystemBase)); //Does not fail if number = 0
+	size_t numRequiredDigits = static_cast<size_t>(ceil(log(currentNumber + 1.0) / log(numberSystemBase))); //Does not fail if number = 0
 	if (numRequiredDigits == 0) numRequiredDigits = 1;
 	m_digits.resize(numRequiredDigits, 0);
 
-	for (size_t i = numRequiredDigits; currentNumber > numeric_limits<long double>::epsilon(); i--)
+	//for (size_t i = numRequiredDigits; i >= 0 && currentNumber > numeric_limits<long double>::epsilon(); i--)
+	for (size_t i = numRequiredDigits; i >= 0 && currentNumber >= 1; i--)
 	{
-		m_digits[i - 1] = ::std::fmod(currentNumber, numberSystemBase); //Assuming DigitType can hold any number less than numberSystemBase, otherwise it should throw exception
+		m_digits[i - 1] = static_cast<DigitType>(std::fmod(currentNumber, numberSystemBase)); //Assuming DigitType can hold any number less than numberSystemBase, otherwise it should throw exception
 		currentNumber /= numberSystemBase;
+
+		if (i == 0) break;
 	}
 }
 
@@ -334,6 +343,8 @@ void BigInteger::doMultiply(vector<DigitType>& lhsCumResultVector, const vector<
 		//Note: carry will never be non zero when we reach here. lhsCumResultVector always has the number of elements to accomodate multiplication.
 		assert(carry == 0);
 	}
+
+	BigInteger::removeLeadingZeros(lhsCumResultVector);
 }
 
 void BigInteger::doMultiply(vector<DigitType>& lhsCumResultVector, const vector<DigitType>& rhsVector, const ResultType& baseIn)
@@ -361,7 +372,9 @@ void BigInteger::doMultiply(vector<DigitType>& lhsCumResultVector, const vector<
 
 		//Note: carry will never be non zero when we reach here. lhsCumResultVector always has the number of elements to accomodate multiplication.
 		assert(carry == 0);
-	}	
+	}
+
+	BigInteger::removeLeadingZeros(lhsCumResultVector);
 }
 
 void BigInteger::doMultiply(vector<DigitType>& lhsCumResultVector, const ResultType& rhs, const ResultType& baseIn)
@@ -398,6 +411,8 @@ void BigInteger::doMultiply(vector<DigitType>& lhsCumResultVector, const ResultT
 
 	//Note: carry will never be non zero when we reach here. m_digits always has the number of elements to accomodate multiplication.
 	//assert(carry == 0);
+
+	BigInteger::removeLeadingZeros(lhsCumResultVector);
 }
 
 
@@ -717,11 +732,25 @@ string BigInteger::toString1(DigitType userBase /*= 10*/) const
 
 	if (!m_isPositive)
 	{
-		retVal.erase(retVal.begin(), retVal.begin() + retVal.find_first_not_of('0') - 1);
-		retVal[0] = '-';
+		size_t pos = retVal.find_first_not_of('0');
+		if (pos == string::npos)
+			retVal = "0";
+		else if(pos == 0)
+			retVal = '-' + retVal;
+		else
+		{
+			retVal.erase(retVal.begin(), retVal.begin() + pos - 1);
+			retVal[0] = '-';
+		}
 	}
 	else
-		retVal.erase(retVal.begin(), retVal.begin() + retVal.find_first_not_of('0'));
+	{
+		size_t pos = retVal.find_first_not_of('0');
+		if (pos == string::npos)
+			retVal = "0";
+		else
+			retVal.erase(retVal.begin(), retVal.begin() + pos);
+	}
 
 	//cout << "\nPost calc time: " << t.getDurationStringTillNowInNanoSeconds();
 
@@ -1020,6 +1049,7 @@ void BigInteger::operator+=(const BigInteger& rhs)
 		}
 	}
 
+	removeLeadingZeros();
 	correctIfNegativeZero();
 }
 
@@ -1128,15 +1158,20 @@ BigInteger::DigitType operator%(const BigInteger& lhs, const BigInteger::DigitTy
 	return remainder;
 }
 
-void BigInteger::removeLeadingZeros()
+void BigInteger::removeLeadingZeros(vector<DigitType>& vecIn)
 {
 	size_t i = 0;
 	//Keep the last digit if zero
-	for (; i < m_digits.size() - 1; i++)
-		if (m_digits[i] != 0)
+	for (; i < vecIn.size() - 1; i++)
+		if (vecIn[i] != 0)
 			break;
 
-	m_digits.erase(m_digits.begin(), m_digits.begin() + i);
+	vecIn.erase(vecIn.begin(), vecIn.begin() + i);
+}
+
+void BigInteger::removeLeadingZeros()
+{
+	BigInteger::removeLeadingZeros(m_digits);
 }
 
 void BigInteger::correctIfNegativeZero()
@@ -1876,7 +1911,7 @@ BigInteger BigInteger::getNextPrimeNumber(const BigInteger& number, const Primal
 		primeNumber.doAddSingleDigit(2);
 	}
 
-	BigInteger::getLogger() << "Found prime number after testing " + to_string(trials) + " odd numbers!" + " Time required : " + t.getDurationStringTillNowInNanoSeconds();
+	BigInteger::getLogger() << "\nFound prime number after testing " + to_string(trials) + " odd numbers!" + " Time required : " + t.getDurationStringTillNowInNanoSeconds();
 
 	return primeNumber;
 }
@@ -1982,7 +2017,7 @@ bool BigInteger::isPrime(const PrimalityTest& primalityTestMethod) const
 		retValue &= MillerRabinPrimalityTest_usingOptimizedBases(10); break;
 	}
 
-	BigInteger::getLogger() << ("isPrime - primalityTestMethod: " + to_string(primalityTestMethod) + " Time required: " + t.getDurationStringTillNowInNanoSeconds());
+	//BigInteger::getLogger() << ("\nisPrime - primalityTestMethod: " + to_string(primalityTestMethod) + " Time required: " + t.getDurationStringTillNowInNanoSeconds());
 
 	return retValue;
 }

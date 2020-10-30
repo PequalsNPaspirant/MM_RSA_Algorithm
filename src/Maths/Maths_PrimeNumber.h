@@ -69,7 +69,7 @@ namespace mm {
 	Type PrimeNumber<Type>::generateNextPrimeNumber(Type referenceNumber, ePrimalityTest primalityTest /*= ePrimalityTest()*/)
 	{
 		//Timer t;
-		referenceNumber = referenceNumber % 2 == 0 ? referenceNumber + 1 : referenceNumber + 2;
+		referenceNumber = referenceNumber % Type{ 2 } == Type{ 0 } ? referenceNumber + Type{ 1 } : referenceNumber + Type{ 2 };
 		while (!checkIfPrimeNumber(referenceNumber, primalityTest))
 			referenceNumber += 2;
 
@@ -97,10 +97,15 @@ namespace mm {
 	template <typename Type>
 	bool PrimeNumber<Type>::deterministic_BruteForcePrimalityTest(Type number)
 	{
-		if (number > 1)
+		if (number > Type{ 1 })
 		{
-			for (Type i = 2; i < (Type)sqrt(number) + 1; i++)
-				if (number % i == 0)
+			if (number % Type{ 2 } == Type{ 0 })
+				return false;
+
+			long double numberDouble = static_cast<long double>(number);
+			Type limit = static_cast<Type>(sqrt(numberDouble)) + Type{ 1 };
+			for (Type i = Type{ 3 }; i < limit; i += Type{ 2 })
+				if (number % i == Type{ 0 })
 					return false;
 			return true;
 		}

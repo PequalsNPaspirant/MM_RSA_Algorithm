@@ -1,5 +1,6 @@
 ﻿
 #include "RSA.h"
+#include "MM_UnitTestFramework/MM_UnitTestFramework.h"
 
 namespace mm {
 

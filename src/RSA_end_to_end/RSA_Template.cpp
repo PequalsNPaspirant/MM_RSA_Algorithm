@@ -2,6 +2,8 @@
 //Start to end demo of RSA algorithm including large number arithmatic, modular exponentiation and lot more
 //Take an example of real world public key from various web sites
 
+#include "RSA_Template.h"
+
 /*
 TODO:
 DONE: Code refactoring of existing RSA_Template class
@@ -451,7 +453,3 @@ Keywords:
 	Return first L octets from MgfOut
 
 */
-
-
-#include "RSA_Template.h"
-

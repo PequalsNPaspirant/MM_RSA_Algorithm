@@ -180,8 +180,8 @@ namespace mm {
 		double result5 = power3(base, exponent, mul3);
 		double result6 = power4(base, exponent, mul4);
 		MM_EXPECT_TRUE(AreAllValuesEqual(result1, result2, result3, result4, result5, result6),
-			result1, result2, result3, result4, result5, result6)
-			MM_EXPECT_TRUE(mul1 == mul2 && mul2 == mul3 && mul3 == mul4, mul1, mul2, mul3, mul4)
+			base, exponent, result1, result2, result3, result4, result5, result6);
+		//MM_EXPECT_TRUE(mul1 == mul2 && mul2 == mul3 && mul3 == mul4, base, exponent, mul1, mul2, mul3, mul4); // number of multiplication may be different
 	}
 
 	MM_DECLARE_FLAG(arithmeticOperations_power);

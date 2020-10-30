@@ -94,6 +94,7 @@ namespace mm {
 		//BigInteger(const ResultType& number);
 		BigInteger(const unsigned long long& number);
 
+		BigInteger(const double& number);
 		BigInteger(const long double& number);
 		BigInteger(const string& numberString, DigitType userBase = 10);
 		BigInteger(const vector<DigitType>& digits);
@@ -157,6 +158,15 @@ namespace mm {
 		long long covertToLongLong() const;
 		long double covertToLongDouble();
 		long long hashCode();
+
+		operator long long()
+		{
+			return covertToLongLong();
+		}
+		operator long double()
+		{
+			return covertToLongDouble();
+		}
 
 		static BigInteger getPrimeNumber(size_t bits, const PrimalityTest& primalityTestMethod);
 		static BigInteger getNextPrimeNumber(const BigInteger& number, const PrimalityTest& primalityTestMethod);
@@ -235,6 +245,7 @@ namespace mm {
 
 		void resize(const size_t& newSize);
 		void removeLeadingZeros();
+		static void removeLeadingZeros(vector<DigitType>& vecIn);
 		void correctIfNegativeZero();
 		friend int compareMagnitudes(const BigInteger& lhs, const BigInteger& rhs);
 

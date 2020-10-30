@@ -191,7 +191,7 @@ namespace mm {
 			cout << "\nh = f % a = " << hs;
 			assert(g == b);
 			assert(gs == bs);
-			assert(h == 0LL);
+			assert(h == BigInteger::bigIntZero);
 			assert(hs == "0");
 		}
 
@@ -205,7 +205,7 @@ namespace mm {
 			cout << "\nj = f % b = " << js;
 			assert(i == a);
 			assert(is == as);
-			assert(j == 0LL);
+			assert(j == BigInteger::bigIntZero);
 			assert(js == "0");
 		}
 
@@ -266,7 +266,7 @@ namespace mm {
 			cout << "\ndiv2 = dividend / rhs = " << div2s;
 			cout << "\nrem2 = dividend % rhs = " << rem2s;
 
-			if (min == 0
+			if (min == BigInteger::bigIntZero
 				|| (!isLhsNegative && !isRhsNegative && !isMinNegative)
 				|| (isLhsNegative && isRhsNegative && !isMinNegative))
 			{
@@ -284,10 +284,10 @@ namespace mm {
 				|| (isLhsNegative && isRhsNegative && isMinNegative)
 				|| ((isLhsNegative || isRhsNegative) && !isMinNegative))
 			{
-				assert(div1.absolute() == (rhs.absolute() - 1));
+				assert(div1.absolute() == (rhs.absolute() - BigInteger::bigIntOne));
 				assert((rem1.absolute() + min.absolute()) == lhs.absolute());
 
-				assert(div2.absolute() == (lhs.absolute() - 1));
+				assert(div2.absolute() == (lhs.absolute() - BigInteger::bigIntOne));
 				assert((rem2.absolute() + min.absolute()) == rhs.absolute());
 			}
 		}
@@ -602,7 +602,7 @@ namespace mm {
 		t.resetTimer();
 		BigInteger factorial = BigInteger::bigIntOne;
 		for (BigInteger::DigitType num = 1; num < 50000; ++num)
-			factorial = factorial * num;
+			factorial = factorial * BigInteger{ num };
 
 		cout << t.getDurationStringTillNowInNanoSeconds();
 		cout << "\nfactorial of 50000 = " << factorial.toString();
