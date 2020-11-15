@@ -23,3 +23,4 @@
 /project_settings/windows_visual_studio/MM_RSA_Algorithm/MM_RSA_Algorithm/x64/Release/MM_RSA_Algorithm.tlog/*.lastbuildstate
 /project_settings/windows_visual_studio/MM_RSA_Algorithm/MM_RSA_Algorithm/x64/Release/MM_SudokuSolver.tlog/*.tlog
 /project_settings/windows_visual_studio/MM_RSA_Algorithm/MM_RSA_Algorithm/x64/Release/MM_SudokuSolver.tlog/*.lastbuildstate
+*.enc

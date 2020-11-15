@@ -12,6 +12,7 @@ http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/6-b14/jav
 using namespace std;
 
 #include "BigInteger_Template.h"
+#include "MM_UnitTestFramework/MM_UnitTestFramework.h"
 
 // ============================================= Testing ===============================================
 
@@ -19,7 +20,7 @@ namespace mm {
 
 	void testConstructionBigIntegerTemplate()
 	{
-		cout << "\nTesting construction of BigIntegerTemplate:";
+		cout << "\n\nTesting construction of BigIntegerTemplate:";
 
 		long long testValues[] = { 0, 1, 2, 5, 8, 9, 10, 16, 32, 64, 99, 100, 123456, 10000250,
 								  -0, -1, -2, -5, -8, -9, -10, -16, -32, -64, -99, -100, -123456, -10000250 };
@@ -52,7 +53,7 @@ namespace mm {
 
 	void testConstructionBigIntegerTemplateExaustive()
 	{
-		cout << "\nTesting construction of BigIntegerTemplate (Exaustive Test):";
+		cout << "\n\nTesting construction of BigIntegerTemplate (Exaustive Test):";
 		const int TEST_CASES = 100;
 		const int TEST_BASES = 10;
 		unsigned int base[TEST_BASES];
@@ -120,7 +121,7 @@ namespace mm {
 
 	void testConstructionBigIntegerTemplateVeryVeryExaustive()
 	{
-		cout << "\nTesting construction of BigIntegerTemplate (Very Very Exaustive Test):";
+		cout << "\n\nTesting construction of BigIntegerTemplate (Very Very Exaustive Test):";
 		const int MAX_DIGITS = 10;
 		const int COUNT = 5;
 		size_t maxBase = 32;
@@ -130,7 +131,7 @@ namespace mm {
 
 		for (int digits = 1; digits <= MAX_DIGITS; digits++)
 		{
-			long long modulus = pow(10, digits);
+			long long modulus = static_cast<long long>(pow(10, digits));
 			for (int iterations = 0; iterations < COUNT; iterations++)
 			{
 				long long number = rand() % modulus;
@@ -186,12 +187,12 @@ namespace mm {
 
 	void testAdditionSubstractionMultiplicationBigIntegerTemplate()
 	{
-		cout << "\nTesting Arithmetic Operations (Addition & Substraction) on BigIntegerTemplate:";
+		cout << "\n\nTesting Arithmetic Operations (Addition & Substraction) on BigIntegerTemplate:";
 		const int TEST_CASES = 500;
 		const int MAX_DIGITS = 10;
 		long long modulus[MAX_DIGITS];
 		for (int digits = 0; digits < MAX_DIGITS; digits++)
-			modulus[digits] = pow(10, digits);
+			modulus[digits] = static_cast<long long>(pow(10, digits));
 
 		size_t maxBase = 32;
 		const int COUNT = 4;
@@ -247,4 +248,11 @@ namespace mm {
 		testBasicArithmeticOperationsBigIntegerTemplate();
 	}
 
+
+	MM_DECLARE_FLAG(BigInteger_Template_unit_test);
+
+	MM_UNIT_TEST(BigInteger_Template_unit_test_1, BigInteger_Template_unit_test)
+	{
+		BigIntegerTemplateTest();
+	}
 }

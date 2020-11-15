@@ -7,6 +7,7 @@ using namespace std;
 
 #include "BigInteger.h"
 #include "Timer/Timer_Timer.h"
+#include "MM_UnitTestFramework/MM_UnitTestFramework.h"
 
 namespace mm {
 
@@ -93,12 +94,12 @@ namespace mm {
 		for (int i = 0; i < count; i++)
 			for (int k = 0; k < count; k++)
 			{
-				cout << "\nValue: " << testValues[i];
+				//cout << "\nValue: " << testValues[i];
 				testSmallNumbers(testValues[i], testValues[k]);
 			}
 
 		//Random numbers
-		cout << "\nTesting Arithmetic Operations (Addition, Substraction, Multiplication and division) on BigInteger:";
+		cout << "\n\nTesting Arithmetic Operations (Addition, Substraction, Multiplication and division) on BigInteger:";
 		const int TEST_CASES = 1000;
 		const int MAX_DIGITS = 10;
 		long long modulus[MAX_DIGITS];
@@ -122,7 +123,7 @@ namespace mm {
 				if (iterations % 2 == 0)
 					number2 = -number2;
 
-				cout << "\nValues: " << number1 << " & " << number2;
+				//cout << "\nValues: " << number1 << " & " << number2;
 				testSmallNumbers(number1, number2);
 			}
 		}
@@ -191,7 +192,7 @@ namespace mm {
 			cout << "\nh = f % a = " << hs;
 			assert(g == b);
 			assert(gs == bs);
-			assert(h == 0LL);
+			assert(h == BigInteger::bigIntZero);
 			assert(hs == "0");
 		}
 
@@ -205,7 +206,7 @@ namespace mm {
 			cout << "\nj = f % b = " << js;
 			assert(i == a);
 			assert(is == as);
-			assert(j == 0LL);
+			assert(j == BigInteger::bigIntZero);
 			assert(js == "0");
 		}
 
@@ -266,7 +267,7 @@ namespace mm {
 			cout << "\ndiv2 = dividend / rhs = " << div2s;
 			cout << "\nrem2 = dividend % rhs = " << rem2s;
 
-			if (min == 0
+			if (min == BigInteger::bigIntZero
 				|| (!isLhsNegative && !isRhsNegative && !isMinNegative)
 				|| (isLhsNegative && isRhsNegative && !isMinNegative))
 			{
@@ -284,10 +285,10 @@ namespace mm {
 				|| (isLhsNegative && isRhsNegative && isMinNegative)
 				|| ((isLhsNegative || isRhsNegative) && !isMinNegative))
 			{
-				assert(div1.absolute() == (rhs.absolute() - 1));
+				assert(div1.absolute() == (rhs.absolute() - BigInteger::bigIntOne));
 				assert((rem1.absolute() + min.absolute()) == lhs.absolute());
 
-				assert(div2.absolute() == (lhs.absolute() - 1));
+				assert(div2.absolute() == (lhs.absolute() - BigInteger::bigIntOne));
 				assert((rem2.absolute() + min.absolute()) == rhs.absolute());
 			}
 		}
@@ -577,8 +578,8 @@ namespace mm {
 	{
 		Timer t;
 		
-		cout << "\nTest: Generating 100000 digit random big integer (Takes 14,721,756 nanoseconds; 380,121 ns): ";
-		size_t bits = 100000 * (log(10) / log(2));
+		cout << "\n\nTest: Generating 100000 digit random big integer (Takes 14,721,756 nanoseconds; 380,121 ns): ";
+		size_t bits = static_cast<size_t>(100000 * (log(10) / log(2)));
 		t.resetTimer();		
 		BigInteger b1 = BigInteger::getRandomNumber(bits);
 		cout << t.getDurationStringTillNowInNanoSeconds();
@@ -597,12 +598,12 @@ namespace mm {
 	void testExtraLargeNumbers_test5_factorial()
 	{
 		Timer t;
-		cout << "\nTest: Generating 50000! (Takes 6,108,231,991 nanoseconds): ";
+		cout << "\n\nTest: Generating 50000! (Takes 6,108,231,991 nanoseconds): ";
 
 		t.resetTimer();
 		BigInteger factorial = BigInteger::bigIntOne;
 		for (BigInteger::DigitType num = 1; num < 50000; ++num)
-			factorial = factorial * num;
+			factorial = factorial * BigInteger{ num };
 
 		cout << t.getDurationStringTillNowInNanoSeconds();
 		cout << "\nfactorial of 50000 = " << factorial.toString();
@@ -682,7 +683,7 @@ namespace mm {
 		int currentIndex = 0;
 		for (int n = 2; currentIndex != count; n++)
 		{
-			int squareRootN = sqrt(n);
+			int squareRootN = static_cast<int>(sqrt(n));
 			int i = 0;
 			while (true)
 			{
@@ -698,7 +699,7 @@ namespace mm {
 			}
 		}
 
-		cout << "\nstatic const vector<DigitType> first" << count << "Primes = {\n\t";
+		cout << "\n\nstatic const vector<DigitType> first" << count << "Primes = {\n\t";
 		int groupEnd = 100;
 		for (int i = 0; i < primes.size(); i++)
 		{
@@ -716,7 +717,7 @@ namespace mm {
 
 	void FindNextPrime(const BigInteger& referenceNumber, const PrimalityTest& primalityTestMethod)
 	{
-		cout << "\nFinding next prime. Reference Number: " << referenceNumber.toString();
+		cout << "\n\nFinding next prime. Reference Number: " << referenceNumber.toString();
 		BigInteger prime = BigInteger::getNextPrimeNumber(referenceNumber, primalityTestMethod);
 		string primeStr(prime.toString());
 		cout << "\nPrime number = " << primeStr;
@@ -737,33 +738,40 @@ namespace mm {
 		//unsigned long long max is 18,446,744,073,709,551,615 - a 20 digit number
 		for (size_t digits = 1; digits < 20; ++digits)
 		{
+			BigInteger::getLogger() << ("\n\n=================== Exercise: generating prime number of " + to_string(digits) + " digits");
 			BigInteger::ResultType randomNumber = generateRandomNumber(digits);
 			FindNextPrime(randomNumber, Fermat_efficient);
 			FindNextPrime(randomNumber, MillerRabin_basic);
 		}
 
 		//Find random primes of various different bit size
-		size_t incrementBy = 8;
-		for (size_t bits = incrementBy; bits < 1025; bits += incrementBy)
+		vector<size_t> bits = { 
+			8, 16, 24, 32, 40, 48, 56, 64, 72, 80,
+			100, 200, 300, 400, 500, 600, 700, 800, 900, 1000,
+			1024, 2048, 3072, 4096
+		};
+		for (size_t i = 0; i < bits.size(); ++i)
 		{
-			BigInteger randomNumber = BigInteger::getRandomNumber(bits);
+			BigInteger::getLogger() << ("\n\n=================== Exercise: generating prime number of length " + to_string(bits[i]) + " bits");
+			BigInteger randomNumber = BigInteger::getRandomNumber(bits[i]);
 			FindNextPrime(randomNumber, Fermat_efficient);
 			FindNextPrime(randomNumber, MillerRabin_basic);
 		}
 	}
 
-	void generateBigPrimeNumbers1024bits()
-	{
-		//Find 10 random primes of 1024 bits
-		for (int i = 0; i < 10; i++)
-		{
-			BigInteger::getLogger() << ("=================== Exercise: " + to_string(i));
-			//_sleep(4000);
-			BigInteger randomNumber = BigInteger::getRandomNumber(1024);
-			FindNextPrime(randomNumber, Fermat_efficient);
-			FindNextPrime(randomNumber, MillerRabin_basic);
-		}
-	}
+	//void generateBigPrimeNumbers1024bits()
+	//{
+	//	//Find 10 random primes of 1024 bits
+	//	BigInteger::getLogger() << "\n=================== Exercise: Find 10 prime numbers of 1024 bits";
+	//	for (int i = 0; i < 10; i++)
+	//	{
+	//		BigInteger::getLogger() << ("\n" + to_string(i + 1) + " th prime number: ");
+	//		//_sleep(4000);
+	//		BigInteger randomNumber = BigInteger::getRandomNumber(1024);
+	//		FindNextPrime(randomNumber, Fermat_efficient);
+	//		FindNextPrime(randomNumber, MillerRabin_basic);
+	//	}
+	//}
 
 	//This function is not used
 	void FindRandomPrime(const size_t& bits, const PrimalityTest& primalityTestMethod)
@@ -852,34 +860,37 @@ namespace mm {
 	{
 		cout << "\n\n~~~~~~~~~~~~~~~~~~ BigInteger_UnitTest() ~~~~~~~~~~~~~~~~~~~~~~~\n";
 
-		//BigInteger bigInt1(-16337), bigInt2(-730), bigIntQuotient, bigIntRemainder;
-		//bigInt1.divideAndRemainder(bigInt2, bigIntQuotient, bigIntRemainder);
-
-		//Some utility functions:
-		//generatePrimeNumbers(1000);
-
 		//One time seed initialization
 		srand((unsigned)time(0));
 
+		//Some utility functions:
+		generatePrimeNumbers(1000);
 
-		//testBigIntegerInitialization();
-		//testSmallNumbers();
-		//testVeryLargeNumbers();
+		testBigIntegerInitialization();
+		testSmallNumbers();
+		testVeryLargeNumbers();
 		testExtraLargeNumbers();
 
-		//generateBigPrimeNumbers();
+		generateBigPrimeNumbers();
 		//generateBigPrimeNumbers1024bits();
-		//testPredefinedPrimeNumbers();
+		testPredefinedPrimeNumbers();
 
-		//generateAndTestCarmichaelNumbers();
-		//testPredefinedCarmichaelNumbers();
-		//testFermatPseudoPrimes();
-		//testAbsoluteFermatPseudoPrimes();
-		//testMillerRabinPseudoPrimes();
+		generateAndTestCarmichaelNumbers();
+		testPredefinedCarmichaelNumbers();
+		testFermatPseudoPrimes();
+		testAbsoluteFermatPseudoPrimes();
+		testMillerRabinPseudoPrimes();
 
 		//BigInteger::getLogger().close();
 	}
 
+
+	MM_DECLARE_FLAG(BigInteger_unit_test);
+
+	MM_UNIT_TEST(BigInteger_unit_test_1, BigInteger_unit_test)
+	{
+		BigInteger_UnitTest();
+	}
 
 
 	/*

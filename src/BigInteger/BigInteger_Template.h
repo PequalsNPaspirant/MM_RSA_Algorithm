@@ -17,6 +17,13 @@ It all boils down to:
 
 */
 
+/*
+
+big integer implementation:
+http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/6-b14/java/math/BigInteger.java
+
+*/
+
 namespace mm {
 
 	template<typename TypeToHoldResultsOfArithmeticOperations>
@@ -122,13 +129,13 @@ namespace mm {
 			m_isPositive = false;
 			currentNumber = -currentNumber;
 		}
-		size_t numRequiredDigits = ceil(log(currentNumber + 1.0) / log(base)); //Does not fail if number = 0
+		size_t numRequiredDigits = static_cast<size_t>(ceil(log(currentNumber + 1.0) / log(base))); //Does not fail if number = 0
 		if (numRequiredDigits == 0) numRequiredDigits = 1;
 		m_digits.resize(numRequiredDigits, 0);
 
 		for (size_t i = numRequiredDigits; currentNumber > 0; i--)
 		{
-			m_digits[i - 1] = currentNumber % base; //Assuming DigitType can hold any number less than base, otherwise it should throw exception
+			m_digits[i - 1] = static_cast<DigitType>(currentNumber % base); //Assuming DigitType can hold any number less than base, otherwise it should throw exception
 			currentNumber /= base;
 		}
 	}
@@ -150,7 +157,7 @@ namespace mm {
 		size_t baseTo = m_base;
 
 		int startIndexOfString = 0;
-		int endIndexOfString = numberString.length();
+		int endIndexOfString = static_cast<int>(numberString.length());
 
 		//Check if number is negative
 		if (numberString[0] == '-')
@@ -165,7 +172,7 @@ namespace mm {
 
 		//TODO: Handle three cases differently for efficiency?
 		size_t numInputDigits = numberString.length() - startIndexOfString;
-		size_t numDigits = (baseFrom == baseTo) ? numInputDigits : ceil(log(baseFrom + 1.0) / log(baseTo) * numInputDigits);
+		size_t numDigits = (baseFrom == baseTo) ? numInputDigits : static_cast<size_t>(ceil(log(baseFrom + 1.0) / log(baseTo) * numInputDigits));
 		m_digits.resize(numDigits, 0);
 
 		size_t digitsInEachGroup = 1;
@@ -180,7 +187,7 @@ namespace mm {
 		{
 			size_t digitsInEachGroup = numInputDigits / numDigits;
 			//DigitType is big enough to store following multiplication
-			DigitType multiplier = pow(baseFrom, digitsInEachGroup);
+			DigitType multiplier = static_cast<DigitType>(pow(baseFrom, digitsInEachGroup));
 
 			size_t start = startIndexOfString, end;
 			while (start < endIndexOfString)
@@ -188,7 +195,7 @@ namespace mm {
 				if ((end = start + digitsInEachGroup) > endIndexOfString)
 				{
 					end = endIndexOfString;
-					multiplier = pow(baseFrom, end - start);
+					multiplier = static_cast<DigitType>(pow(baseFrom, end - start));
 				}
 
 				doMultiply(multiplier);
@@ -200,11 +207,11 @@ namespace mm {
 		}
 		else // baseFrom > baseTo
 		{
-			size_t numRequiredDigits = ceil(log(baseFrom + 1.0) / log(baseTo)); //Does not fail if number = 0
+			size_t numRequiredDigits = static_cast<int>(ceil(log(baseFrom + 1.0) / log(baseTo))); //Does not fail if number = 0
 			if (numRequiredDigits == 0) numRequiredDigits = 1;
 
 			vector<DigitType> baseVector(numRequiredDigits);
-			convertDecimalToBase(baseVector, baseFrom);
+			convertDecimalToBase(baseVector, static_cast<DigitType>(baseFrom));
 			vector<DigitType> currentDigitVector(numRequiredDigits);
 			for (size_t start = startIndexOfString; start < endIndexOfString; start++)
 			{
@@ -271,7 +278,7 @@ namespace mm {
 				TypeToHoldResultsOfArithmeticOperations result = copy[start - 1] * TypeToHoldResultsOfArithmeticOperations(rhsVector[rhsIndex - 1]) + carry;
 				result += m_digits[start - 1 - rhsDigitPosition];
 				m_digits[start - 1 - rhsDigitPosition] = result % m_base;
-				carry = result / m_base;
+				carry = static_cast<DigitType>(result / m_base);
 			}
 		}
 	}
@@ -304,7 +311,7 @@ namespace mm {
 			//Handle overflow
 			TypeToHoldResultsOfArithmeticOperations result = m_digits[start - 1] * TypeToHoldResultsOfArithmeticOperations(singleDigit) + carry;
 			m_digits[start - 1] = result % m_base;
-			carry = result / m_base;
+			carry = static_cast<DigitType>(result / m_base);
 		}
 
 		//Note: carry will never be non zero when we reach here. m_digits always has the number of elements to accomodate multiplication.
@@ -327,7 +334,7 @@ namespace mm {
 			//Handle overflow
 			TypeToHoldResultsOfArithmeticOperations result = m_digits[lhsIndex - 1] + rhsValue + TypeToHoldResultsOfArithmeticOperations(carry);
 			m_digits[lhsIndex - 1] = result % m_base;
-			carry = result / m_base;
+			carry = static_cast<DigitType>(result / m_base);
 		}
 
 		//Note: carry will never be non zero when we reach here. m_digits always has the number of elements to accomodate addition.
@@ -351,7 +358,7 @@ namespace mm {
 			rhsValue += carry;
 			if (m_digits[lhsIndex - 1] < rhsValue)
 			{
-				result = (m_base - rhsValue) + m_digits[lhsIndex - 1];
+				result = static_cast<DigitType>((m_base - rhsValue) + m_digits[lhsIndex - 1]);
 				carry = 1;
 			}
 			else
@@ -386,7 +393,7 @@ namespace mm {
 			//Handle overflow
 			TypeToHoldResultsOfArithmeticOperations result = m_digits[start - 1] + TypeToHoldResultsOfArithmeticOperations(carry);
 			m_digits[start - 1] = result % m_base;
-			carry = result / m_base;
+			carry = static_cast<DigitType>(result / m_base);
 		}
 
 		//Note: carry will never be non zero when we reach here. m_digits always has the number of elements to accomodate addition.
@@ -401,7 +408,7 @@ namespace mm {
 		for (; currentNumber > 0; i--)
 		{
 			digitVector[i - 1] = currentNumber % m_base; //Assuming DigitType can hold any number less than m_base, otherwise it should throw exception
-			currentNumber /= m_base;
+			currentNumber /= static_cast<DigitType>(m_base);
 		}
 
 		//Fill up zeros if any remaining objects in vector
@@ -438,7 +445,7 @@ namespace mm {
 		for (; start < end; start++)
 		{
 			DigitType currentDigitValue = getDecimalValue(numberString[start]);
-			result = result * baseFrom + currentDigitValue;
+			result = static_cast<DigitType>(result * baseFrom + currentDigitValue);
 		}
 
 		return result;
@@ -510,6 +517,8 @@ namespace mm {
 				continue;
 			else
 				return m_digits[thisStart] < rhsVector[rhsStart];
+
+		return false;
 	}
 
 	template<typename DigitType, typename TypeToHoldResultsOfArithmeticOperations>

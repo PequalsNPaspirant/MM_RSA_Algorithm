@@ -104,7 +104,7 @@ namespace mm {
 
 	string Timer::getDurationStringInNanoSeconds(long long duration)
 	{
-		int length = log10(duration + 1) + 1; //Avoid log(0)
+		int length = static_cast<int>(log10(duration + 1) + 1); //Avoid log(0)
 		length = length + (length - 1) / 3 + 12;
 		static const string pattern("000,000,000,000,000,000,000,000,000,000,000,000,000 nanoseconds");
 		string durationString(pattern.end() - length, pattern.end());
@@ -192,8 +192,8 @@ namespace mm {
 
 		auto binarySearch = [](const long long& days, const vector<int>& daysVector) -> int {
 			int start = 0;
-			int end = daysVector.size() - 1;
-			assert(days >= 0 && days <= daysVector[end], "Year out of range");
+			int end = static_cast<int>(daysVector.size() - 1);
+			mm_assert(days >= 0 && days <= daysVector[end], "Year out of range");
 
 			while (end - start > 1)
 			{
@@ -248,12 +248,12 @@ namespace mm {
 		if (isLeapYear(year))
 		{
 			month = binarySearch(remainingDaysInYear, daysInMonthLeapYear);
-			date = remainingDaysInYear - daysInMonthLeapYear[month - 1] + 1;
+			date = static_cast<int>(remainingDaysInYear - daysInMonthLeapYear[month - 1] + 1);
 		}
 		else
 		{
 			month = binarySearch(remainingDaysInYear, daysInMonthNonLeapYear);
-			date = remainingDaysInYear - daysInMonthNonLeapYear[month - 1] + 1;
+			date = static_cast<int>(remainingDaysInYear - daysInMonthNonLeapYear[month - 1] + 1);
 		}
 
 		//duration is in nanoseconds, so it can have max 9 digits, 2 commas and 1 dot

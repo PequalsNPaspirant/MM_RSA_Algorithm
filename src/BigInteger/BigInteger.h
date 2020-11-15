@@ -94,6 +94,7 @@ namespace mm {
 		//BigInteger(const ResultType& number);
 		BigInteger(const unsigned long long& number);
 
+		BigInteger(const double& number);
 		BigInteger(const long double& number);
 		BigInteger(const string& numberString, DigitType userBase = 10);
 		BigInteger(const vector<DigitType>& digits);
@@ -158,6 +159,15 @@ namespace mm {
 		long double covertToLongDouble();
 		long long hashCode();
 
+		operator long long()
+		{
+			return covertToLongLong();
+		}
+		operator long double()
+		{
+			return covertToLongDouble();
+		}
+
 		static BigInteger getPrimeNumber(size_t bits, const PrimalityTest& primalityTestMethod);
 		static BigInteger getNextPrimeNumber(const BigInteger& number, const PrimalityTest& primalityTestMethod);
 		static BigInteger getRandomNumber(size_t bits);
@@ -169,7 +179,7 @@ namespace mm {
 		bool isPrime(const PrimalityTest& primalityTestMethod) const;
 
 		bool MillerRabinPrimalityTest_basic(int iterations) const;
-		bool MillerRabinPrimalityTest_usingOptimizedBases(int iterations) const;
+		bool MillerRabinPrimalityTest_usingOptimizedBases(size_t iterations) const;
 
 		bool ManindraAgrawalNeerajKayalNitinSaxenaIITKanpur6August2002PrimesIsInP(int iterations) const;
 		bool cyclotomicPrimalityTest(int iterations) const;
@@ -235,6 +245,7 @@ namespace mm {
 
 		void resize(const size_t& newSize);
 		void removeLeadingZeros();
+		static void removeLeadingZeros(vector<DigitType>& vecIn);
 		void correctIfNegativeZero();
 		friend int compareMagnitudes(const BigInteger& lhs, const BigInteger& rhs);
 

@@ -157,6 +157,12 @@ BigInteger::BigInteger(const unsigned long long& number)
 	initialize(m_digits, number);
 }
 
+BigInteger::BigInteger(const double& number)
+	: BigInteger(static_cast<long double>(number))
+{
+
+}
+
 BigInteger::BigInteger(const long double& number)
 	: m_isPositive(true), m_digits(0) //Avoid initial memory allocation
 {
@@ -166,14 +172,17 @@ BigInteger::BigInteger(const long double& number)
 		m_isPositive = false;
 		currentNumber = -currentNumber;
 	}
-	size_t numRequiredDigits = ceil(log(currentNumber + 1.0) / log(numberSystemBase)); //Does not fail if number = 0
+	size_t numRequiredDigits = static_cast<size_t>(ceil(log(currentNumber + 1.0) / log(numberSystemBase))); //Does not fail if number = 0
 	if (numRequiredDigits == 0) numRequiredDigits = 1;
 	m_digits.resize(numRequiredDigits, 0);
 
-	for (size_t i = numRequiredDigits; currentNumber > numeric_limits<long double>::epsilon(); i--)
+	//for (size_t i = numRequiredDigits; i >= 0 && currentNumber > numeric_limits<long double>::epsilon(); i--)
+	for (size_t i = numRequiredDigits; i >= 0 && currentNumber >= 1; i--)
 	{
-		m_digits[i - 1] = ::std::fmod(currentNumber, numberSystemBase); //Assuming DigitType can hold any number less than numberSystemBase, otherwise it should throw exception
+		m_digits[i - 1] = static_cast<DigitType>(std::fmod(currentNumber, numberSystemBase)); //Assuming DigitType can hold any number less than numberSystemBase, otherwise it should throw exception
 		currentNumber /= numberSystemBase;
+
+		if (i == 0) break;
 	}
 }
 
@@ -190,8 +199,8 @@ BigInteger::BigInteger(const string& numberString, DigitType userBase /*= 10*/)
 	ResultType baseTo = numberSystemBase;
 
 	// Remove initial and trailing spaces
-	int startIndexOfString = numberString.find_first_not_of(' ');
-	int endIndexOfString = numberString.find_last_not_of(' ') + 1;
+	int startIndexOfString = static_cast<int>(numberString.find_first_not_of(' '));
+	int endIndexOfString = static_cast<int>(numberString.find_last_not_of(' ') + 1);
 
 	//Check if number is negative
 	if (numberString[startIndexOfString] == '-')
@@ -206,11 +215,11 @@ BigInteger::BigInteger(const string& numberString, DigitType userBase /*= 10*/)
 
 	size_t numInputDigits = numberString.length() - startIndexOfString;
 	size_t digitsInEachGroup = BigInteger::inputDigitsPerBigIntegerDigit[baseFrom];
-	size_t numDigits = ceil(double(numInputDigits) / digitsInEachGroup);
+	size_t numDigits = static_cast<size_t>(ceil(double(numInputDigits) / digitsInEachGroup));
 	m_digits.resize(numDigits, 0);
 	
 	//DigitType is big enough to store following multiplication
-	DigitType multiplier = pow(baseFrom, digitsInEachGroup);
+	DigitType multiplier = static_cast<DigitType>(pow(baseFrom, digitsInEachGroup));
 
 	size_t digitsInFirstGroup = numInputDigits % digitsInEachGroup;
 	size_t start = startIndexOfString;
@@ -254,7 +263,7 @@ ostream& BigInteger::getLogger()
 
 void BigInteger::initialize(vector<DigitType>& digits, unsigned long long number)
 {
-	size_t numRequiredDigits = ceil(log(number + 1.0) / log(numberSystemBase)); //Does not fail if number = 0
+	size_t numRequiredDigits = static_cast<size_t>(ceil(log(number + 1.0) / log(numberSystemBase))); //Does not fail if number = 0
 	if (numRequiredDigits == 0) numRequiredDigits = 1;
 	m_digits.resize(numRequiredDigits, 0);
 
@@ -334,6 +343,8 @@ void BigInteger::doMultiply(vector<DigitType>& lhsCumResultVector, const vector<
 		//Note: carry will never be non zero when we reach here. lhsCumResultVector always has the number of elements to accomodate multiplication.
 		assert(carry == 0);
 	}
+
+	BigInteger::removeLeadingZeros(lhsCumResultVector);
 }
 
 void BigInteger::doMultiply(vector<DigitType>& lhsCumResultVector, const vector<DigitType>& rhsVector, const ResultType& baseIn)
@@ -355,13 +366,15 @@ void BigInteger::doMultiply(vector<DigitType>& lhsCumResultVector, const vector<
 			//ResultType result = lhsVector[start - 1] * ResultType(rhsVector[rhsIndex - 1]) + carry;
 			unsigned long long result = lhsVector[start] * static_cast<unsigned long long>(rhsVector[rhsIndex]) + carry;
 			result += lhsCumResultVector[start - rhsDigitPosition];
-			lhsCumResultVector[start - rhsDigitPosition] = result % baseIn;
+			lhsCumResultVector[start - rhsDigitPosition] = static_cast<DigitType>(result % baseIn);
 			carry = result / baseIn;
 		}
 
 		//Note: carry will never be non zero when we reach here. lhsCumResultVector always has the number of elements to accomodate multiplication.
 		assert(carry == 0);
-	}	
+	}
+
+	BigInteger::removeLeadingZeros(lhsCumResultVector);
 }
 
 void BigInteger::doMultiply(vector<DigitType>& lhsCumResultVector, const ResultType& rhs, const ResultType& baseIn)
@@ -383,7 +396,7 @@ void BigInteger::doMultiply(vector<DigitType>& lhsCumResultVector, const ResultT
 		result = lhsCumResultVector[end] * rhs + carry;
 		//m_digits[start - 1] = result % numberSystemBase;
 		//m_digits[start] = (result << bitsInNumberSystemBase) >> bitsInNumberSystemBase;
-		lhsCumResultVector[end] = (result % baseIn);
+		lhsCumResultVector[end] = static_cast<DigitType>((result % baseIn));
 		//m_digits[start] = (DigitType) maskToCalculateRemainder;
 		//carry = result / numberSystemBase;
 		carry = result / baseIn;
@@ -398,6 +411,8 @@ void BigInteger::doMultiply(vector<DigitType>& lhsCumResultVector, const ResultT
 
 	//Note: carry will never be non zero when we reach here. m_digits always has the number of elements to accomodate multiplication.
 	//assert(carry == 0);
+
+	BigInteger::removeLeadingZeros(lhsCumResultVector);
 }
 
 
@@ -431,7 +446,7 @@ void BigInteger::doMultiplyAndAdd(vector<ResultType>& lhsCumResultVector, const 
 
 void BigInteger::doMultiplyBySingleDigit(DigitType singleDigit)
 {
-	unsigned long long carry = 0;
+	DigitType carry = 0;
 	unsigned long long longSingleDigit = singleDigit;
 	unsigned long long result = 0;
 	//Remove zeros at the left of number
@@ -507,7 +522,7 @@ void BigInteger::doAdd(vector<DigitType>& lhsCumResultVector, const vector<Digit
 		//ResultType result = lhsCumResultVector[lhsIndex - 1] + ResultType(rhsValue) + carry;
 		result += lhsCumResultVector[lhsIndex - 1];
 		result += carry;
-		lhsCumResultVector[lhsIndex - 1] = result % baseIn;
+		lhsCumResultVector[lhsIndex - 1] = static_cast<DigitType>(result % baseIn);
 		//lhsCumResultVector[lhsIndex - 1] = result << bitsInBase;
 		carry = result / baseIn;
 		//carry = result >> bitsInBase;
@@ -532,7 +547,7 @@ void BigInteger::doAdd(vector<DigitType>& lhsCumResultVector, const ResultType& 
 		result = lhsCumResultVector[end] + carry;
 		//m_digits[start - 1] = result % numberSystemBase;
 		//m_digits[start - 1] = (result << bitsInNumberSystemBase) >> bitsInNumberSystemBase;
-		lhsCumResultVector[end] = (result % baseIn);
+		lhsCumResultVector[end] = static_cast<DigitType>(result % baseIn);
 		//m_digits[start] = (DigitType) maskToCalculateRemainder;
 		//carry = result / bitsInNumberSystemBase;
 		carry = result / baseIn;
@@ -557,12 +572,12 @@ void BigInteger::doSubstract(vector<DigitType>& lhsCumResultVector, const vector
 		result += carry;
 		if (lhsCumResultVector[lhsIndex - 1] < result)
 		{
-			lhsCumResultVector[lhsIndex - 1] = (numberSystemBase - result) + lhsCumResultVector[lhsIndex - 1]; //The arithmatic operations in this sequence ensures no overflow or underflow
+			lhsCumResultVector[lhsIndex - 1] = static_cast<DigitType>((numberSystemBase - result) + lhsCumResultVector[lhsIndex - 1]); //The arithmatic operations in this sequence ensures no overflow or underflow
 			carry = 1;
 		}
 		else
 		{
-			lhsCumResultVector[lhsIndex - 1] = lhsCumResultVector[lhsIndex - 1] - result;
+			lhsCumResultVector[lhsIndex - 1] = static_cast<DigitType>(lhsCumResultVector[lhsIndex - 1] - result);
 			carry = 0;
 		}
 	}
@@ -598,7 +613,7 @@ void BigInteger::convertDecimalToBase(vector<DigitType>& digitVector, size_t tar
 	size_t i = digitVector.size();
 	for (; currentNumber > 0; i--)
 	{
-		digitVector[i - 1] = currentNumber % targetBase; //Assuming DigitType can hold any number less than m_base, otherwise it should throw exception
+		digitVector[i - 1] = static_cast<DigitType>(currentNumber % targetBase); //Assuming DigitType can hold any number less than m_base, otherwise it should throw exception
 		currentNumber /= targetBase;
 	}
 
@@ -633,7 +648,7 @@ BigInteger::DigitType BigInteger::convertCharToDecimalNumber(const char& digitIn
 	else if(digitIn > 96 && digitIn < 123)
 		currentUnitPlace = digitIn - 'a' + 10;
 	else
-		assert(false, "Invalid Digit");
+		mm_assert(false, "Invalid Digit");
 
 	return currentUnitPlace;
 }
@@ -651,7 +666,7 @@ BigInteger::DigitType BigInteger::convertStringToDecimalNumber(const string& num
 		//	continue;
 
 		currentDigitValue = convertCharToDecimalNumber(numberString[start]);
-		result = result * baseFrom + currentDigitValue;
+		result = static_cast<DigitType>(result * baseFrom + currentDigitValue);
 	}
 
 	return result;
@@ -682,15 +697,15 @@ string BigInteger::toString1(DigitType userBase /*= 10*/) const
 	ResultType baseFrom = numberSystemBase;
 	ResultType baseTo = userBase;
 
-	size_t power = floor(log(baseFrom) / log(baseTo));
-	DigitType divisor = pow(baseTo, power);
+	size_t power = static_cast<DigitType>(floor(log(baseFrom) / log(baseTo)));
+	DigitType divisor = static_cast<DigitType>(pow(baseTo, power));
 
 	DigitType remainder;
 	BigInteger copy(*this);
 	copy.m_isPositive = true;
 	copy.removeLeadingZeros();
 	size_t numInputDigits = copy.m_digits.size();
-	size_t numOutputDigits = ceil(log(baseFrom + 1.0) / log(baseTo)) * numInputDigits;  //TODO: Need to optimize for correct value. It Should not be much larger.
+	size_t numOutputDigits = static_cast<size_t>(ceil(log(baseFrom + 1.0) / log(baseTo)) * numInputDigits);  //TODO: Need to optimize for correct value. It Should not be much larger.
 	string retVal(numOutputDigits, '0');
 
 	size_t startIndex = numOutputDigits;
@@ -699,8 +714,8 @@ string BigInteger::toString1(DigitType userBase /*= 10*/) const
 	//cout << "\nPre calc time: " << t.getDurationStringTillNowInNanoSeconds();
 
 	--numInputDigits;
-	//while (copy != BigInteger::bigIntZero)  //Slower by 625,000,000 ns for 500,000 digit number
-	while (copy.m_digits[numInputDigits] != 0)
+	while (copy != BigInteger::bigIntZero)  //Slower by 625,000,000 ns for 500,000 digit number
+	//while (copy.m_digits[numInputDigits] != 0)
 	{
 		LocalIndex = startIndex;
 		copy.doDivide(divisor, remainder);
@@ -717,11 +732,25 @@ string BigInteger::toString1(DigitType userBase /*= 10*/) const
 
 	if (!m_isPositive)
 	{
-		retVal.erase(retVal.begin(), retVal.begin() + retVal.find_first_not_of('0') - 1);
-		retVal[0] = '-';
+		size_t pos = retVal.find_first_not_of('0');
+		if (pos == string::npos)
+			retVal = "0";
+		else if(pos == 0)
+			retVal = '-' + retVal;
+		else
+		{
+			retVal.erase(retVal.begin(), retVal.begin() + pos - 1);
+			retVal[0] = '-';
+		}
 	}
 	else
-		retVal.erase(retVal.begin(), retVal.begin() + retVal.find_first_not_of('0'));
+	{
+		size_t pos = retVal.find_first_not_of('0');
+		if (pos == string::npos)
+			retVal = "0";
+		else
+			retVal.erase(retVal.begin(), retVal.begin() + pos);
+	}
 
 	//cout << "\nPost calc time: " << t.getDurationStringTillNowInNanoSeconds();
 
@@ -739,7 +768,7 @@ string BigInteger::toString2(DigitType userBase /*= 10*/) const
 
 	//size_t power = floor(log(baseFrom) / log(baseTo));
 	size_t power = 18;
-	ResultType div = pow(baseTo, power);
+	ResultType div = static_cast<ResultType>(pow(baseTo, power));
 	BigInteger divisor(div);
 
 	ResultType remainder;
@@ -747,7 +776,7 @@ string BigInteger::toString2(DigitType userBase /*= 10*/) const
 	copy.m_isPositive = true;
 	copy.removeLeadingZeros();
 	size_t numInputDigits = copy.m_digits.size();
-	size_t numOutputDigits = ceil(log(baseFrom + 1.0) / log(baseTo)) * numInputDigits;  //TODO: Need to optimize for correct value. It Should not be much larger.
+	size_t numOutputDigits = static_cast<size_t>(ceil(log(baseFrom + 1.0) / log(baseTo)) * numInputDigits);  //TODO: Need to optimize for correct value. It Should not be much larger.
 	string retVal(numOutputDigits, '0');
 
 	size_t startIndex = numOutputDigits;
@@ -795,7 +824,7 @@ string BigInteger::toString3(DigitType userBase /*= 10*/) const
 	ResultType baseFrom = numberSystemBase;
 	ResultType baseTo = userBase;
 
-	size_t digitSize = ceil(log(baseFrom + 1.0) / log(baseTo)); //Does not fail if number = 0
+	size_t digitSize = static_cast<size_t>(ceil(log(baseFrom + 1.0) / log(baseTo))); //Does not fail if number = 0
 	if (digitSize == 0) digitSize = 1;
 
 	vector<DigitType> baseVector(digitSize);
@@ -808,7 +837,7 @@ string BigInteger::toString3(DigitType userBase /*= 10*/) const
 		++index;
 
 	size_t numInputDigits = m_digits.size() - index;
-	size_t numOutputDigits = ceil(log(baseFrom + 1.0) / log(baseTo)) * numInputDigits;
+	size_t numOutputDigits = static_cast<size_t>(ceil(log(baseFrom + 1.0) / log(baseTo)) * numInputDigits);
 	vector<DigitType> out(numOutputDigits, 0);
 
 	for (; index < m_digits.size(); index++)
@@ -844,8 +873,8 @@ string BigInteger::toString3(DigitType userBase /*= 10*/) const
 string BigInteger::toString4(DigitType userBase /*= 10*/) const
 {
 	ResultType baseFrom = numberSystemBase;
-	size_t power = floor(log(baseFrom) / log(userBase));
-	ResultType baseTo = pow(userBase, power);
+	size_t power = static_cast<size_t>(floor(log(baseFrom) / log(userBase)));
+	ResultType baseTo = static_cast<ResultType>(pow(userBase, power));
 
 	//size_t digitSize = ceil(log(baseFrom + 1.0) / log(userBase)); //Does not fail if number = 0
 	//if (digitSize == 0) digitSize = 1;
@@ -860,7 +889,7 @@ string BigInteger::toString4(DigitType userBase /*= 10*/) const
 		++index;
 
 	size_t numInputDigits = m_digits.size() - index;
-	size_t numOutputDigits = ceil(log(baseFrom + 1.0) / log(baseTo)) * numInputDigits;
+	size_t numOutputDigits = static_cast<size_t>(ceil(log(baseFrom + 1.0) / log(baseTo)) * numInputDigits);
 	vector<DigitType> out(numOutputDigits, 0);
 
 	for (; index < m_digits.size(); ++index)
@@ -889,7 +918,7 @@ string BigInteger::toString4(DigitType userBase /*= 10*/) const
 		firstDigit /= 10;
 	}
 
-	size_t strLength = numDecimalDigits + (out.size() - start - 1) * power + (m_isPositive ? 0 : 1);
+	size_t strLength = static_cast<size_t>(numDecimalDigits + (out.size() - start - 1) * power + (m_isPositive ? 0 : 1));
 	string retVal(strLength, '0');
 	if (!m_isPositive)
 		retVal[0] = '-';
@@ -913,8 +942,8 @@ string BigInteger::toString4(DigitType userBase /*= 10*/) const
 string BigInteger::toString5(DigitType userBase /*= 10*/) const
 {
 	ResultType baseFrom = numberSystemBase;
-	size_t power = floor(log(baseFrom) / log(userBase));
-	ResultType baseTo = pow(userBase, power);
+	size_t power = static_cast<size_t>(floor(log(baseFrom) / log(userBase)));
+	ResultType baseTo = static_cast<ResultType>(pow(userBase, power));
 
 	//size_t digitSize = ceil(log(baseFrom + 1.0) / log(userBase)); //Does not fail if number = 0
 	//if (digitSize == 0) digitSize = 1;
@@ -929,7 +958,7 @@ string BigInteger::toString5(DigitType userBase /*= 10*/) const
 		++index;
 
 	size_t numInputDigits = m_digits.size() - index;
-	size_t numOutputDigits = ceil(log(baseFrom + 1.0) / log(baseTo)) * numInputDigits;
+	size_t numOutputDigits = static_cast<size_t>(ceil(log(baseFrom + 1.0) / log(baseTo)) * numInputDigits);
 	vector<ResultType> out(numOutputDigits, 0);
 
 	for (; index < m_digits.size(); ++index)
@@ -950,7 +979,7 @@ string BigInteger::toString5(DigitType userBase /*= 10*/) const
 	if (start == out.size())
 		return "0";
 
-	DigitType firstDigit = out[start];
+	DigitType firstDigit = static_cast<DigitType>(out[start]);
 	size_t numDecimalDigits = 0;
 	while (firstDigit > 0)
 	{
@@ -958,7 +987,7 @@ string BigInteger::toString5(DigitType userBase /*= 10*/) const
 		firstDigit /= 10;
 	}
 
-	size_t strLength = numDecimalDigits + (out.size() - start - 1) * power + (m_isPositive ? 0 : 1);
+	size_t strLength = static_cast<size_t>(numDecimalDigits + (out.size() - start - 1) * power + (m_isPositive ? 0 : 1));
 	string retVal(strLength, '0');
 	if (!m_isPositive)
 		retVal[0] = '-';
@@ -967,7 +996,7 @@ string BigInteger::toString5(DigitType userBase /*= 10*/) const
 	while (index > start)
 	{
 		size_t localIndex = strLength;
-		DigitType localDigit = out[--index];
+		DigitType localDigit = static_cast<DigitType>(out[--index]);
 		while (localDigit > 0)
 		{
 			retVal[--localIndex] = getChar(localDigit % 10);
@@ -1020,6 +1049,7 @@ void BigInteger::operator+=(const BigInteger& rhs)
 		}
 	}
 
+	removeLeadingZeros();
 	correctIfNegativeZero();
 }
 
@@ -1128,15 +1158,23 @@ BigInteger::DigitType operator%(const BigInteger& lhs, const BigInteger::DigitTy
 	return remainder;
 }
 
-void BigInteger::removeLeadingZeros()
+void BigInteger::removeLeadingZeros(vector<DigitType>& vecIn)
 {
+	if (vecIn.size() == 0)
+		return;
+
 	size_t i = 0;
 	//Keep the last digit if zero
-	for (; i < m_digits.size() - 1; i++)
-		if (m_digits[i] != 0)
+	for (; i < vecIn.size() - 1; i++)
+		if (vecIn[i] != 0)
 			break;
 
-	m_digits.erase(m_digits.begin(), m_digits.begin() + i);
+	vecIn.erase(vecIn.begin(), vecIn.begin() + i);
+}
+
+void BigInteger::removeLeadingZeros()
+{
+	BigInteger::removeLeadingZeros(m_digits);
 }
 
 void BigInteger::correctIfNegativeZero()
@@ -1201,7 +1239,6 @@ void BigInteger::divideAndRemainder(const BigInteger& divisor, BigInteger& quoti
 	if(sizeDivisor >= 2)
 		currentDividend.addDigitsToRight(dividentCopy, 0, sizeDivisor - 2);
 
-	DigitType trialDividendDigits[5], trialDivisorDigits[5];
 	for (size_t i = sizeDivisor - 1; i < sizeDivident; ++i)
 	{
 		currentDividend.addDigitsToRight(dividentCopy, i, i);
@@ -1248,7 +1285,7 @@ void BigInteger::divideAndRemainder(const BigInteger& divisor, BigInteger& quoti
 		//Based on experimental results, third version avoids the second iteration below in trial division
 		//DigitType stepQuotient = round(stepDividend / stepDivisor); //TODO: what if stepDivisor = 0?
 		//DigitType stepQuotient = round(stepDividend / stepDivisor) - 1;
-		DigitType stepQuotient = stepDividend / stepDivisor;
+		DigitType stepQuotient = static_cast<DigitType>(stepDividend / stepDivisor);
 
 		//assert(stepQuotient < numberSystemBase);
 		if (stepQuotient >= numberSystemBase)
@@ -1284,7 +1321,7 @@ void BigInteger::divideAndRemainder(const BigInteger& divisor, BigInteger& quoti
 				else
 				{
 					rightLimit = stepQuotient;
-					stepQuotient -= ((stepQuotient - leftLimit + 1) / 2);
+					stepQuotient -= static_cast<DigitType>((stepQuotient - leftLimit + 1) / 2);
 				}			
 			}
 			else
@@ -1301,7 +1338,7 @@ void BigInteger::divideAndRemainder(const BigInteger& divisor, BigInteger& quoti
 					else
 					{
 						leftLimit = stepQuotient;
-						stepQuotient += ((rightLimit - stepQuotient + 1) / 2);
+						stepQuotient += static_cast<DigitType>((rightLimit - stepQuotient + 1) / 2);
 					}
 				}
 			}				
@@ -1481,12 +1518,12 @@ void BigInteger::doDivide(const DigitType& divisor, DigitType& remainder)
 		//stepDividend = remainder * numberSystemBase + m_digits[i];
 		//stepDividend = (ULLRemainder << bitsInNumberSystemBase) + m_digits[i];
 		stepDividend = (ULLRemainder << bitsInNumberSystemBase) | m_digits[i];
-		m_digits[i] = stepDividend / divisor;
+		m_digits[i] = static_cast<DigitType>(stepDividend / divisor);
 		ULLRemainder = stepDividend % divisor;
 		//ULLRemainder = stepDividend - m_digits[i] * ULLDivisor;
 	}
 
-	remainder = ULLRemainder;
+	remainder = static_cast<DigitType>(ULLRemainder);
 }
 
 void BigInteger::addDigitsToRight(const BigInteger& reference, size_t start, size_t end)
@@ -1876,7 +1913,7 @@ BigInteger BigInteger::getNextPrimeNumber(const BigInteger& number, const Primal
 		primeNumber.doAddSingleDigit(2);
 	}
 
-	BigInteger::getLogger() << "Found prime number after testing " + to_string(trials) + " odd numbers!" + " Time required : " + t.getDurationStringTillNowInNanoSeconds();
+	BigInteger::getLogger() << "\nFound prime number after testing " + to_string(trials) + " odd numbers!" + " Time required : " + t.getDurationStringTillNowInNanoSeconds();
 
 	return primeNumber;
 }
@@ -1982,7 +2019,7 @@ bool BigInteger::isPrime(const PrimalityTest& primalityTestMethod) const
 		retValue &= MillerRabinPrimalityTest_usingOptimizedBases(10); break;
 	}
 
-	BigInteger::getLogger() << ("isPrime - primalityTestMethod: " + to_string(primalityTestMethod) + " Time required: " + t.getDurationStringTillNowInNanoSeconds());
+	//BigInteger::getLogger() << ("\nisPrime - primalityTestMethod: " + to_string(primalityTestMethod) + " Time required: " + t.getDurationStringTillNowInNanoSeconds());
 
 	return retValue;
 }
@@ -1991,7 +2028,7 @@ BigInteger BigInteger::getRandomNumber(size_t bits) //Static method
 {
 	//Generate random sequence of digits with numberSystemBase: ResultType numberSystemBase = 1 << (sizeof(DigitType) * 8);
 	int bitsInEachDigit = sizeof(DigitType) * 8;
-	int numDigits = ceil(bits / double(bitsInEachDigit));
+	int numDigits = static_cast<int>(ceil(bits / double(bitsInEachDigit)));
 	BigInteger randomNumber;
 	for (int k = 0; k < numDigits; k++)
 		randomNumber.m_digits.push_back(rand() % numberSystemBase);
@@ -2002,7 +2039,7 @@ BigInteger BigInteger::getRandomNumber(size_t bits) //Static method
 BigInteger BigInteger::getRandomNumber2(size_t bits) //Static method
 {
 	//Generate random sequence of decimal digits
-	int numDigits = bits * (log(2) / log(10));
+	int numDigits = static_cast<int>(bits * (log(2) / log(10)));
 	string random(numDigits, '0');
 	for (int k = 0; k < numDigits; k++)
 		random[k] = char('0' + rand() % 10);
@@ -2225,7 +2262,7 @@ bool BigInteger::MillerRabinPrimalityTest_basic(int iterations) const
 		d.doDivide(DigitType(2), _remainder_);
 		++r;
 	}
-	BigInteger::getLogger() << ("\nd = " + d.toString() + " r = " + to_string(r));
+	//BigInteger::getLogger() << ("\nd = " + d.toString() + " r = " + to_string(r));
 
 	bool retValue = true;
 	for (int i = 0; i < iterations; ++i)
@@ -2334,7 +2371,7 @@ const vector<BigInteger::DigitType> BigInteger::getHardcodedOptimizedPrimalityTe
 		return getFirst100Primes();
 }
 
-bool BigInteger::MillerRabinPrimalityTest_usingOptimizedBases(int iterations) const
+bool BigInteger::MillerRabinPrimalityTest_usingOptimizedBases(size_t iterations) const
 {
 	//Computations of the Miller-Rabin test are in modular arithmetic (mod n). 
 	//Therefore, bases greater than n, such as a = n+2,n+3,n+4... would produce exactly the same results as a = 2,3,4..., thus yielding no additional information at all. 
@@ -2357,7 +2394,7 @@ bool BigInteger::MillerRabinPrimalityTest_usingOptimizedBases(int iterations) co
 	bool retValue = true;
 	if (iterations > bases.size())
 		iterations = bases.size();
-	for (int i = 0; i < iterations; ++i)
+	for (size_t i = 0; i < iterations; ++i)
 	{
 		base = bases[i];
 		if (!(base < *this))
@@ -2540,7 +2577,7 @@ bool BigInteger::FermatPrimalityTest_withBiggerPrimeNumbersAsBase(int iterations
 	//Timer t;
 	bool retValue = true;
 	const vector<DigitType>& first10000Primes = getFirst10000Primes();
-	int index = first10000Primes.size() - 1;
+	size_t index = first10000Primes.size() - 1;
 	BigInteger base;
 	const BigInteger exponent = *this - 1;
 	for (int i = 0; i < iterations; ++i)

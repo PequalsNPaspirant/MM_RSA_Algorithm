@@ -24,14 +24,10 @@
     <ClCompile Include="..\..\..\..\src\Maths\Maths_RandomNumber.cpp" />
     <ClCompile Include="..\..\..\..\src\Timer\Timer_Timer.cpp" />
     <ClCompile Include="..\..\..\..\src\BigInteger\BigInteger.cpp" />
-    <ClCompile Include="..\..\..\..\src\BigInteger\BigInteger_Template.cpp" />
     <ClCompile Include="..\..\..\..\src\BigInteger\BigInteger_Template_UnitTest.cpp" />
     <ClCompile Include="..\..\..\..\src\BigInteger\BigInteger_UnitTest.cpp" />
     <ClCompile Include="..\..\..\..\src\_MM_RSA_Algorithm_main.cpp" />
-    <ClCompile Include="..\..\..\..\src\RSA_end_to_end\RSA.cpp" />
-    <ClCompile Include="..\..\..\..\src\RSA_end_to_end\RSA_Template.cpp" />
     <ClCompile Include="..\..\..\..\src\RSA_end_to_end\RSA_Template_UnitTest.cpp" />
-    <ClCompile Include="..\..\..\..\src\RSA_end_to_end\RSA_UnitTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\src\MM_UnitTestFramework\MM_UnitTestFramework.h" />
@@ -48,7 +44,7 @@
     <ProjectGuid>{9721DC22-7B64-47F1-B299-F909BDEE9F83}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>MM_RSA_Algorithm</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

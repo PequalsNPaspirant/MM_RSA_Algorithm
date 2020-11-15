@@ -1,5 +1,6 @@
 ﻿
 #include "RSA_Template.h"
+#include "MM_UnitTestFramework/MM_UnitTestFramework.h"
 
 namespace mm {
 
@@ -23,8 +24,8 @@ namespace mm {
 		objRSAULongLong.testRSAComplete(RSATemplateUnitTest::getTestMessageHavingAllChars2());
 	}
 
-
-	void RSATemplateUnitTest::TestAllAlgorithmsOfRSA()
+	template<typename Type>
+	void RSATemplateUnitTest::TestAllAlgorithmsOfRSA(int primeNumberSizeInBits, bool avoidUsingIterateOverPrivateExponent_d)
 	{
 		cout << "\n\n-------------------------- TestAllAlgorithmsOfRSA -----------------------------------";
 
@@ -41,18 +42,23 @@ namespace mm {
 		{
 			const ustring& message = strArray[i];
 			for (int TFType = 0; TFType < RSAMethodInitializer::MaxTotientFunctionType; TFType++)
+			{
 				for (int eCalcMethod = 0; eCalcMethod < RSAMethodInitializer::MaxPrivateExponentCalculationMethod; eCalcMethod++)
 				{
+					if (avoidUsingIterateOverPrivateExponent_d && eCalcMethod == RSAMethodInitializer::IterateOverPrivateExponent_d)
+						continue;
+
 					RSAMethodInitializer initializer = RSAMethodInitializer(RSAMethodInitializer::eTotientFunctionType(TFType),
 						RSAMethodInitializer::ePrivateExponentCalculationMethod(eCalcMethod));
 
 					cout << "\n\nTotientFunctionType              : " << RSAMethodInitializer::eTotientFunctionType(TFType);
 					cout << "\nPrivateExponentCalculationMethod : " << RSAMethodInitializer::ePrivateExponentCalculationMethod(eCalcMethod);
 
-					RSA_Template<unsigned long long> objRSAULongLong(16);
+					RSA_Template<Type> objRSAULongLong(primeNumberSizeInBits);
 					objRSAULongLong.initialize(initializer);
 					objRSAULongLong.testRSAComplete(message);
 				}
+			}
 		}
 	}
 
@@ -265,7 +271,7 @@ namespace mm {
 				RSA_Template<unsigned long long> objRSAULongLong(p, q, e, d, TF);
 				if (objRSAULongLong.generatePrivateExponent(2 * N)) // d = 
 				{
-					assert(false, "We should never reach here!");
+					mm_assert(false, "We should never reach here!");
 				}
 				else
 					cout << "\nERROR: Unable to calculate private exponent for given situation";
@@ -346,7 +352,7 @@ namespace mm {
 			RSA_Template<unsigned long long> objRSAULongLong(p, q, e, d, TF);
 			if (objRSAULongLong.generatePrivateExponent(2 * N)) // d = 
 			{
-				assert(false, "We should never reach here!");
+				mm_assert(false, "We should never reach here!");
 			}
 			else
 				cout << "\nERROR: Unable to calculate private exponent for given situation";
@@ -571,9 +577,43 @@ namespace mm {
 		srand((unsigned)time(0));
 
 		RSATemplateUnitTest::TestAllDataTypes();
-		RSATemplateUnitTest::TestAllAlgorithmsOfRSA();
+		RSATemplateUnitTest::TestAllAlgorithmsOfRSA<unsigned long long>(16, false);
 		RSATemplateUnitTest::RSATest_usePrecalculatedPrimes();
 		RSATemplateUnitTest::RSATest_boundaryConditions();
+	}
+
+	MM_DECLARE_FLAG(RSA_Template_unit_test);
+
+	MM_UNIT_TEST(RSA_Template_unit_test_1, RSA_Template_unit_test)
+	{
+		RSA_Template_UnitTest();
+	}
+
+	MM_DECLARE_FLAG(RSA_BigInterger_unit_test);
+
+	MM_UNIT_TEST(RSA_BigInterger_unit_test_1, RSA_BigInterger_unit_test)
+	{
+		vector<int> bits{
+			8,
+			10,
+			12,
+			14,
+			16,
+			31,
+			32,
+			33,
+			63,
+			64,
+			65,
+			128,
+			256,
+			512
+		};
+
+		for (int i = 0; i < bits.size(); ++i)
+		{
+			RSATemplateUnitTest::TestAllAlgorithmsOfRSA<mm::BigInteger>(bits[i], true);
+		}
 	}
 
 }
