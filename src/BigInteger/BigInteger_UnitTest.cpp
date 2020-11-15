@@ -738,33 +738,40 @@ namespace mm {
 		//unsigned long long max is 18,446,744,073,709,551,615 - a 20 digit number
 		for (size_t digits = 1; digits < 20; ++digits)
 		{
+			BigInteger::getLogger() << ("\n\n=================== Exercise: generating prime number of " + to_string(digits) + " digits");
 			BigInteger::ResultType randomNumber = generateRandomNumber(digits);
 			FindNextPrime(randomNumber, Fermat_efficient);
 			FindNextPrime(randomNumber, MillerRabin_basic);
 		}
 
 		//Find random primes of various different bit size
-		size_t incrementBy = 8;
-		for (size_t bits = incrementBy; bits < 1025; bits += incrementBy)
+		vector<size_t> bits = { 
+			8, 16, 24, 32, 40, 48, 56, 64, 72, 80,
+			100, 200, 300, 400, 500, 600, 700, 800, 900, 1000,
+			1024, 2048, 3072, 4096
+		};
+		for (size_t i = 0; i < bits.size(); ++i)
 		{
-			BigInteger randomNumber = BigInteger::getRandomNumber(bits);
+			BigInteger::getLogger() << ("\n\n=================== Exercise: generating prime number of " + to_string(bits[i]) + " bits");
+			BigInteger randomNumber = BigInteger::getRandomNumber(bits[i]);
 			FindNextPrime(randomNumber, Fermat_efficient);
 			FindNextPrime(randomNumber, MillerRabin_basic);
 		}
 	}
 
-	void generateBigPrimeNumbers1024bits()
-	{
-		//Find 10 random primes of 1024 bits
-		for (int i = 0; i < 10; i++)
-		{
-			BigInteger::getLogger() << ("=================== Exercise: " + to_string(i));
-			//_sleep(4000);
-			BigInteger randomNumber = BigInteger::getRandomNumber(1024);
-			FindNextPrime(randomNumber, Fermat_efficient);
-			FindNextPrime(randomNumber, MillerRabin_basic);
-		}
-	}
+	//void generateBigPrimeNumbers1024bits()
+	//{
+	//	//Find 10 random primes of 1024 bits
+	//	BigInteger::getLogger() << "\n=================== Exercise: Find 10 prime numbers of 1024 bits";
+	//	for (int i = 0; i < 10; i++)
+	//	{
+	//		BigInteger::getLogger() << ("\n" + to_string(i + 1) + " th prime number: ");
+	//		//_sleep(4000);
+	//		BigInteger randomNumber = BigInteger::getRandomNumber(1024);
+	//		FindNextPrime(randomNumber, Fermat_efficient);
+	//		FindNextPrime(randomNumber, MillerRabin_basic);
+	//	}
+	//}
 
 	//This function is not used
 	void FindRandomPrime(const size_t& bits, const PrimalityTest& primalityTestMethod)
@@ -865,7 +872,7 @@ namespace mm {
 		testExtraLargeNumbers();
 
 		generateBigPrimeNumbers();
-		generateBigPrimeNumbers1024bits();
+		//generateBigPrimeNumbers1024bits();
 		testPredefinedPrimeNumbers();
 
 		generateAndTestCarmichaelNumbers();
