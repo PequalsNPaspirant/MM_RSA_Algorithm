@@ -752,7 +752,7 @@ namespace mm {
 		};
 		for (size_t i = 0; i < bits.size(); ++i)
 		{
-			BigInteger::getLogger() << ("\n\n=================== Exercise: generating prime number of " + to_string(bits[i]) + " bits");
+			BigInteger::getLogger() << ("\n\n=================== Exercise: generating prime number of length " + to_string(bits[i]) + " bits");
 			BigInteger randomNumber = BigInteger::getRandomNumber(bits[i]);
 			FindNextPrime(randomNumber, Fermat_efficient);
 			FindNextPrime(randomNumber, MillerRabin_basic);
