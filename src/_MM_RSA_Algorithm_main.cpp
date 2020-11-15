@@ -11,9 +11,12 @@ namespace mm {
 	//void RSA_Template_UnitTest();
 	//void RSA_UnitTest();
 
-	MM_DEFINE_FLAG(false, arithmeticOperations_power);
-	MM_DEFINE_FLAG(false, RSA_Template_unit_test);
+	MM_DEFINE_FLAG(true, arithmeticOperations_power);
+	MM_DEFINE_FLAG(true, RSA_Template_unit_test);
 	MM_DEFINE_FLAG(true, RSA_BigInterger_unit_test);
+
+	MM_DEFINE_FLAG(true, BigInteger_Template_unit_test);
+	MM_DEFINE_FLAG(true, BigInteger_unit_test);
 }
 
 using namespace mm;

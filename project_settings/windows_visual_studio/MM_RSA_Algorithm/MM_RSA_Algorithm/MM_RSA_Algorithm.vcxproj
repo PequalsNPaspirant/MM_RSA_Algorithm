@@ -24,14 +24,10 @@
     <ClCompile Include="..\..\..\..\src\Maths\Maths_RandomNumber.cpp" />
     <ClCompile Include="..\..\..\..\src\Timer\Timer_Timer.cpp" />
     <ClCompile Include="..\..\..\..\src\BigInteger\BigInteger.cpp" />
-    <ClCompile Include="..\..\..\..\src\BigInteger\BigInteger_Template.cpp" />
     <ClCompile Include="..\..\..\..\src\BigInteger\BigInteger_Template_UnitTest.cpp" />
     <ClCompile Include="..\..\..\..\src\BigInteger\BigInteger_UnitTest.cpp" />
     <ClCompile Include="..\..\..\..\src\_MM_RSA_Algorithm_main.cpp" />
-    <ClCompile Include="..\..\..\..\src\RSA_end_to_end\RSA.cpp" />
-    <ClCompile Include="..\..\..\..\src\RSA_end_to_end\RSA_Template.cpp" />
     <ClCompile Include="..\..\..\..\src\RSA_end_to_end\RSA_Template_UnitTest.cpp" />
-    <ClCompile Include="..\..\..\..\src\RSA_end_to_end\RSA_UnitTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\src\MM_UnitTestFramework\MM_UnitTestFramework.h" />

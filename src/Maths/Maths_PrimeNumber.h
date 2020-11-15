@@ -33,7 +33,7 @@ namespace mm {
 	class PrimeNumber
 	{
 	public:
-		static Type generateRandomPrimeNumber(unsigned int bitCount, ePrimalityTest primalityTest = ePrimalityTest());
+		static Type generateRandomPrimeNumber(size_t bitCount, ePrimalityTest primalityTest = ePrimalityTest());
 		static Type generateNextPrimeNumber(Type referenceNumber, ePrimalityTest primalityTest = ePrimalityTest());
 		static bool checkIfPrimeNumber(Type number, ePrimalityTest primalityTest = ePrimalityTest());
 
@@ -60,7 +60,7 @@ namespace mm {
 	//Public Functions
 
 	template <typename Type>
-	Type PrimeNumber<Type>::generateRandomPrimeNumber(unsigned int bitCount, ePrimalityTest primalityTest /*= ePrimalityTest()*/)
+	Type PrimeNumber<Type>::generateRandomPrimeNumber(size_t bitCount, ePrimalityTest primalityTest /*= ePrimalityTest()*/)
 	{
 		return generateNextPrimeNumber(RandomNumber<Type>::getRandomNumber(bitCount), primalityTest);
 	}
@@ -86,7 +86,7 @@ namespace mm {
 			return deterministic_BruteForcePrimalityTest(number);
 
 		default:
-			assert(false, "Unknown PrimalityTest");
+			mm_assert(false, "Unknown PrimalityTest");
 		}
 
 		return false;

@@ -11,6 +11,8 @@
 //#include <iomanip> //for std::put_time
 using namespace std;
 
+#define mm_assert(expr, msg) assert(expr)
+
 /*
 Clocks:
 

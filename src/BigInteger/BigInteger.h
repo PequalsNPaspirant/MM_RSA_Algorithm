@@ -179,7 +179,7 @@ namespace mm {
 		bool isPrime(const PrimalityTest& primalityTestMethod) const;
 
 		bool MillerRabinPrimalityTest_basic(int iterations) const;
-		bool MillerRabinPrimalityTest_usingOptimizedBases(int iterations) const;
+		bool MillerRabinPrimalityTest_usingOptimizedBases(size_t iterations) const;
 
 		bool ManindraAgrawalNeerajKayalNitinSaxenaIITKanpur6August2002PrimesIsInP(int iterations) const;
 		bool cyclotomicPrimalityTest(int iterations) const;

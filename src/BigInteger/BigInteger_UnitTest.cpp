@@ -7,6 +7,7 @@ using namespace std;
 
 #include "BigInteger.h"
 #include "Timer/Timer_Timer.h"
+#include "MM_UnitTestFramework/MM_UnitTestFramework.h"
 
 namespace mm {
 
@@ -93,12 +94,12 @@ namespace mm {
 		for (int i = 0; i < count; i++)
 			for (int k = 0; k < count; k++)
 			{
-				cout << "\nValue: " << testValues[i];
+				//cout << "\nValue: " << testValues[i];
 				testSmallNumbers(testValues[i], testValues[k]);
 			}
 
 		//Random numbers
-		cout << "\nTesting Arithmetic Operations (Addition, Substraction, Multiplication and division) on BigInteger:";
+		cout << "\n\nTesting Arithmetic Operations (Addition, Substraction, Multiplication and division) on BigInteger:";
 		const int TEST_CASES = 1000;
 		const int MAX_DIGITS = 10;
 		long long modulus[MAX_DIGITS];
@@ -122,7 +123,7 @@ namespace mm {
 				if (iterations % 2 == 0)
 					number2 = -number2;
 
-				cout << "\nValues: " << number1 << " & " << number2;
+				//cout << "\nValues: " << number1 << " & " << number2;
 				testSmallNumbers(number1, number2);
 			}
 		}
@@ -577,8 +578,8 @@ namespace mm {
 	{
 		Timer t;
 		
-		cout << "\nTest: Generating 100000 digit random big integer (Takes 14,721,756 nanoseconds; 380,121 ns): ";
-		size_t bits = 100000 * (log(10) / log(2));
+		cout << "\n\nTest: Generating 100000 digit random big integer (Takes 14,721,756 nanoseconds; 380,121 ns): ";
+		size_t bits = static_cast<size_t>(100000 * (log(10) / log(2)));
 		t.resetTimer();		
 		BigInteger b1 = BigInteger::getRandomNumber(bits);
 		cout << t.getDurationStringTillNowInNanoSeconds();
@@ -597,7 +598,7 @@ namespace mm {
 	void testExtraLargeNumbers_test5_factorial()
 	{
 		Timer t;
-		cout << "\nTest: Generating 50000! (Takes 6,108,231,991 nanoseconds): ";
+		cout << "\n\nTest: Generating 50000! (Takes 6,108,231,991 nanoseconds): ";
 
 		t.resetTimer();
 		BigInteger factorial = BigInteger::bigIntOne;
@@ -682,7 +683,7 @@ namespace mm {
 		int currentIndex = 0;
 		for (int n = 2; currentIndex != count; n++)
 		{
-			int squareRootN = sqrt(n);
+			int squareRootN = static_cast<int>(sqrt(n));
 			int i = 0;
 			while (true)
 			{
@@ -698,7 +699,7 @@ namespace mm {
 			}
 		}
 
-		cout << "\nstatic const vector<DigitType> first" << count << "Primes = {\n\t";
+		cout << "\n\nstatic const vector<DigitType> first" << count << "Primes = {\n\t";
 		int groupEnd = 100;
 		for (int i = 0; i < primes.size(); i++)
 		{
@@ -716,7 +717,7 @@ namespace mm {
 
 	void FindNextPrime(const BigInteger& referenceNumber, const PrimalityTest& primalityTestMethod)
 	{
-		cout << "\nFinding next prime. Reference Number: " << referenceNumber.toString();
+		cout << "\n\nFinding next prime. Reference Number: " << referenceNumber.toString();
 		BigInteger prime = BigInteger::getNextPrimeNumber(referenceNumber, primalityTestMethod);
 		string primeStr(prime.toString());
 		cout << "\nPrime number = " << primeStr;
@@ -852,34 +853,37 @@ namespace mm {
 	{
 		cout << "\n\n~~~~~~~~~~~~~~~~~~ BigInteger_UnitTest() ~~~~~~~~~~~~~~~~~~~~~~~\n";
 
-		//BigInteger bigInt1(-16337), bigInt2(-730), bigIntQuotient, bigIntRemainder;
-		//bigInt1.divideAndRemainder(bigInt2, bigIntQuotient, bigIntRemainder);
-
-		//Some utility functions:
-		//generatePrimeNumbers(1000);
-
 		//One time seed initialization
 		srand((unsigned)time(0));
 
+		//Some utility functions:
+		generatePrimeNumbers(1000);
 
-		//testBigIntegerInitialization();
-		//testSmallNumbers();
-		//testVeryLargeNumbers();
+		testBigIntegerInitialization();
+		testSmallNumbers();
+		testVeryLargeNumbers();
 		testExtraLargeNumbers();
 
-		//generateBigPrimeNumbers();
-		//generateBigPrimeNumbers1024bits();
-		//testPredefinedPrimeNumbers();
+		generateBigPrimeNumbers();
+		generateBigPrimeNumbers1024bits();
+		testPredefinedPrimeNumbers();
 
-		//generateAndTestCarmichaelNumbers();
-		//testPredefinedCarmichaelNumbers();
-		//testFermatPseudoPrimes();
-		//testAbsoluteFermatPseudoPrimes();
-		//testMillerRabinPseudoPrimes();
+		generateAndTestCarmichaelNumbers();
+		testPredefinedCarmichaelNumbers();
+		testFermatPseudoPrimes();
+		testAbsoluteFermatPseudoPrimes();
+		testMillerRabinPseudoPrimes();
 
 		//BigInteger::getLogger().close();
 	}
 
+
+	MM_DECLARE_FLAG(BigInteger_unit_test);
+
+	MM_UNIT_TEST(BigInteger_unit_test_1, BigInteger_unit_test)
+	{
+		BigInteger_UnitTest();
+	}
 
 
 	/*
